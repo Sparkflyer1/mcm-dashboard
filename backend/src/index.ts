@@ -78,15 +78,16 @@ async function refreshTokens(env: Env, tokens: StravaTokens): Promise<StravaToke
     throw new Error("STRAVA_CLIENT_SECRET not found in KV. Add it with: wrangler kv key put --binding STRAVA_KV STRAVA_CLIENT_SECRET <your-secret>");
   }
 
+  // Strava's token endpoint requires application/x-www-form-urlencoded, not JSON
   const resp = await fetch(STRAVA_TOKEN_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
       client_id: env.STRAVA_CLIENT_ID,
       client_secret: clientSecret,
       grant_type: "refresh_token",
       refresh_token: tokens.refresh_token,
-    }),
+    }).toString(),
   });
 
   if (!resp.ok) {
@@ -158,15 +159,17 @@ async function handleCallback(request: Request, env: Env): Promise<Response> {
     );
   }
 
+  // Strava's token endpoint requires application/x-www-form-urlencoded, not JSON
   const tokenResp = await fetch(STRAVA_TOKEN_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
       client_id: env.STRAVA_CLIENT_ID,
       client_secret: clientSecret,
       code,
       grant_type: "authorization_code",
-    }),
+      redirect_uri: env.REDIRECT_URI,
+    }).toString(),
   });
 
   if (!tokenResp.ok) {

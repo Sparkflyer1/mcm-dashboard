@@ -8,7 +8,7 @@ compatibility_flags = ["nodejs_compat"]
 # Set STRAVA_CLIENT_SECRET in KV (see README), NOT here.
 [vars]
 STRAVA_CLIENT_ID = "246990"
-REDIRECT_URI = "https://mcm-strava-worker.<YOUR_SUBDOMAIN>.workers.dev/callback"
+REDIRECT_URI = "https://mcm-strava-worker.tyleresterly.workers.dev/callback"
 
 # ── KV namespace binding ───────────────────────────────────────────────────────
 # Replace <KV_NAMESPACE_ID> with the actual ID shown after `wrangler kv namespace create`
