@@ -1,0 +1,27 @@
+name = "mcm-strava-worker"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ── Environment variables ──────────────────────────────────────────────────────
+# These are public / non-secret values baked at deploy time.
+# Set STRAVA_CLIENT_SECRET in KV (see README), NOT here.
+[vars]
+STRAVA_CLIENT_ID = "246990"
+REDIRECT_URI = "https://mcm-strava-worker.<YOUR_SUBDOMAIN>.workers.dev/callback"
+
+# ── KV namespace binding ───────────────────────────────────────────────────────
+# Replace <KV_NAMESPACE_ID> with the actual ID shown after `wrangler kv namespace create`
+# or use the ID created for you: e4f95c0b2677460baba8496b95b6b78f
+[[kv_namespaces]]
+binding = "STRAVA_KV"
+id = "e4f95c0b2677460baba8496b95b6b78f"
+
+# ── Local dev preview namespace (optional) ─────────────────────────────────────
+# Uncomment and fill in a separate namespace ID for `wrangler dev` previewing:
+# preview_id = "<PREVIEW_KV_NAMESPACE_ID>"
+
+# ── Routes (optional — uncomment to add a custom domain) ──────────────────────
+# [[routes]]
+# pattern = "api.yourdomain.com/strava/*"
+# zone_name = "yourdomain.com"
