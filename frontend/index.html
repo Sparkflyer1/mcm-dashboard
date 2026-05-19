@@ -11,6 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
 
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
@@ -931,8 +933,191 @@
       border: 1px dashed var(--border);
     }
   </style>
+
+<style id="direction-d-override">
+/* ═══ DIRECTION D — VISUAL RESKIN ═══════════════════════════ */
+:root {
+  --bg: #F6F6F6; --charcoal: #302E32; --ink: #302E32;
+  --lime: #BADA55; --lime-dark: #9ab830;
+  --white: #FFFFFF; --muted: #6E6C70;
+  --border: #ECECEC; --card-bg: #FFFFFF;
+  --paper-deep: #D8D8D6; --danger: #e05555; --success: #BADA55;
+  --radius: 0;
+}
+html { height: 100%; }
+body { font-family: 'League Spartan', 'Arial Black', sans-serif !important; background: #F6F6F6 !important; height: 100%; overflow: hidden; }
+h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-serif !important; letter-spacing: 0.06em !important; }
+.card-label,.chart-stat-label { font-family: 'JetBrains Mono', monospace !important; font-size: 0.65rem !important; letter-spacing: 0.1em !important; }
+
+/* ─ Hide original header ─ */
+#site-header { display: none !important; }
+
+/* ─ App shell layout ─ */
+.app-shell { display: flex; height: 100vh; }
+.d-main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; min-width: 0; }
+.page-container { flex: 1; overflow-y: auto; max-width: none !important; padding: 18px 26px !important; margin: 0 !important; }
+
+/* ─ Sidebar ─ */
+.d-sidebar { width: 210px; height: 100vh; background: #302E32; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; position: sticky; top: 0; }
+.d-sb-user { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.d-sb-avatar { width: 34px; height: 34px; border-radius: 50%; background: #BADA55; font-family: 'League Spartan', sans-serif; font-size: 13px; font-weight: 900; display: flex; align-items: center; justify-content: center; color: #302E32; flex-shrink: 0; }
+.d-sb-name { font-family: 'League Spartan', sans-serif; font-size: 10px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.1em; line-height: 1; }
+.d-sb-sub { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: rgba(255,255,255,0.32); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px; }
+.d-sb-countdown { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+.d-sb-cd-label { font-family: 'League Spartan', sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(255,255,255,0.42); margin-bottom: 4px; }
+.d-sb-cd-days { font-family: 'League Spartan', sans-serif; font-size: 46px; font-weight: 900; color: #BADA55; line-height: 0.9; letter-spacing: -0.03em; }
+.d-sb-cd-race { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: rgba(255,255,255,0.32); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+.d-sb-progress { height: 4px; background: rgba(255,255,255,0.12); margin-top: 8px; overflow: hidden; border-radius: 999px; }
+.d-sb-progress-fill { height: 100%; background: #BADA55; border-radius: 999px; }
+.d-sb-progress-meta { display: flex; justify-content: space-between; margin-top: 3px; }
+.d-sb-progress-meta span { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: rgba(255,255,255,0.26); }
+.d-sb-progress-meta .wk { color: #BADA55; }
+.d-sb-nav { padding: 5px 0; flex: 1; }
+.d-nav-item { padding: 6px 16px; display: flex; align-items: center; gap: 7px; text-decoration: none; color: rgba(255,255,255,0.42); font-family: 'League Spartan', sans-serif; font-size: 9.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; border-left: 2px solid transparent; transition: color 0.12s, background 0.12s; }
+.d-nav-item:hover { color: rgba(255,255,255,0.75); background: rgba(255,255,255,0.04); }
+.d-nav-item.active { color: #fff; font-weight: 700; border-left-color: #BADA55; background: rgba(186,218,85,0.1); }
+.d-nav-item::before { content: ''; width: 3px; height: 3px; border-radius: 1px; background: rgba(255,255,255,0.25); flex-shrink: 0; }
+.d-nav-item.active::before { background: #BADA55; }
+.d-sb-footer { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+.d-sb-strava-status { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); display: flex; align-items: center; gap: 5px; margin-bottom: 7px; }
+.d-strava-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); flex-shrink: 0; }
+.d-strava-dot.on { background: #BADA55; }
+.d-sb-footer .btn-strava { width: 100%; justify-content: center; font-family: 'League Spartan', sans-serif !important; font-size: 0.75rem; border-radius: 999px; padding: 0.45rem 1rem; }
+
+/* ─ Topbar ─ */
+.d-topbar { height: 50px; background: #fff; border-bottom: 1px solid #ECECEC; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; }
+.d-topbar-title { font-family: 'League Spartan', sans-serif; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #302E32; }
+.d-topbar-right { display: flex; gap: 8px; align-items: center; }
+.d-topbar-strava { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: #6E6C70; display: flex; align-items: center; gap: 5px; }
+.d-topbar-dot { width: 6px; height: 6px; border-radius: 50%; background: #D8D8D6; flex-shrink: 0; }
+.d-topbar-dot.on { background: #BADA55; }
+.d-topbar-right .btn-strava { border-radius: 0 !important; font-size: 0.75rem; padding: 0.4rem 0.9rem; font-family: 'League Spartan', sans-serif !important; }
+
+/* ─ Cards ─ */
+.card { border-radius: 0 !important; border: 1.5px solid #ECECEC !important; box-shadow: 4px 4px 0 rgba(48,46,50,0.07) !important; }
+.chart-card, .map-card { border-radius: 0 !important; border: 1.5px solid #ECECEC !important; box-shadow: 4px 4px 0 rgba(48,46,50,0.07) !important; }
+
+/* ─ Countdown card ─ */
+#countdown-card { background: #302E32 !important; border-color: #302E32 !important; box-shadow: 4px 4px 0 rgba(186,218,85,0.2) !important; }
+.countdown-eyebrow { font-family: 'JetBrains Mono', monospace !important; font-size: 0.65rem !important; text-transform: uppercase !important; letter-spacing: 0.12em !important; color: rgba(255,255,255,0.42) !important; }
+.countdown-race-name { font-family: 'League Spartan', sans-serif !important; color: #fff !important; }
+.countdown-date-label { font-family: 'JetBrains Mono', monospace !important; font-size: 0.7rem !important; color: rgba(255,255,255,0.35) !important; }
+.cd-num { color: #BADA55 !important; font-family: 'League Spartan', sans-serif !important; font-weight: 900 !important; }
+.cd-label { color: rgba(255,255,255,0.4) !important; font-family: 'JetBrains Mono', monospace !important; font-size: 0.6rem !important; }
+
+/* ─ Buttons ─ */
+.btn { border-radius: 0 !important; font-family: 'League Spartan', sans-serif !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.08em !important; }
+.btn-lime { background: #BADA55 !important; border-color: #BADA55 !important; color: #302E32 !important; }
+.btn-lime:hover { background: #9ab830 !important; border-color: #9ab830 !important; }
+.btn-outline { border-color: #302E32 !important; color: #302E32 !important; }
+.btn-outline:hover { background: #302E32 !important; color: #fff !important; }
+.btn-did-it { background: #302E32 !important; color: #BADA55 !important; border-color: #302E32 !important; border-radius: 0 !important; font-family: 'League Spartan', sans-serif !important; font-weight: 700 !important; }
+.btn-skipped-it { border-color: #302E32 !important; border-radius: 0 !important; font-family: 'League Spartan', sans-serif !important; }
+.btn-ghost { border-radius: 0 !important; }
+.btn-strava { border-radius: 0 !important; }
+
+/* ─ Section labels ─ */
+.section-label h2 { font-family: 'League Spartan', sans-serif !important; font-size: 11px !important; font-weight: 800 !important; text-transform: uppercase !important; letter-spacing: 0.14em !important; }
+.section-label .line { border-color: #302E32 !important; }
+
+/* ─ Week strip ─ */
+.week-day { border-radius: 0 !important; }
+.week-day.today { border-color: #BADA55 !important; background: rgba(186,218,85,0.08) !important; }
+.week-day.today .week-dot { background: #BADA55 !important; }
+
+/* ─ Form ─ */
+.form-label { font-family: 'JetBrains Mono', monospace !important; font-size: 0.65rem !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; }
+.form-input, .form-select, .form-textarea { border-radius: 0 !important; border-color: #D8D8D6 !important; font-family: 'League Spartan', sans-serif !important; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #BADA55 !important; outline: none !important; box-shadow: none !important; }
+.form-submit { background: #302E32 !important; color: #BADA55 !important; border-radius: 0 !important; font-family: 'League Spartan', sans-serif !important; font-weight: 800 !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; border: none !important; }
+.form-submit:hover { background: #1a1a1a !important; }
+
+/* ─ Run list ─ */
+.run-item { border-radius: 0 !important; }
+.run-type-badge { border-radius: 0 !important; }
+
+/* ─ Calendar ─ */
+.calendar-nav-btn { border-radius: 0 !important; }
+.calendar-month-label { font-family: 'League Spartan', sans-serif !important; letter-spacing: 0.06em !important; }
+.cal-day.has-run { background: rgba(186,218,85,0.28) !important; }
+.cal-day.has-long { background: rgba(186,218,85,0.6) !important; }
+.cal-day.today { outline: 2px solid #BADA55 !important; }
+
+/* ─ Map ─ */
+.map-placeholder { background: #EAEAE6 !important; }
+.map-token-input-row input { border-radius: 0 !important; font-family: 'JetBrains Mono', monospace !important; font-size: 0.7rem !important; }
+
+/* ─ Toast ─ */
+#toast { border-radius: 0 !important; font-family: 'JetBrains Mono', monospace !important; font-size: 0.75rem !important; }
+
+/* ─ Strava status dot ─ */
+.strava-status.connected .dot { background: #BADA55 !important; }
+
+/* ─ Scrollbar ─ */
+.page-container::-webkit-scrollbar { width: 4px; }
+.page-container::-webkit-scrollbar-track { background: #F6F6F6; }
+.page-container::-webkit-scrollbar-thumb { background: #D8D8D6; }
+</style>
 </head>
 <body>
+<div class="app-shell">
+
+  <!-- ─── DIRECTION D SIDEBAR ─────────────────────── -->
+  <aside class="d-sidebar">
+    <div class="d-sb-user">
+      <div class="d-sb-avatar">TE</div>
+      <div>
+        <div class="d-sb-name">Tyler Esterly</div>
+        <div class="d-sb-sub">Marathon Training</div>
+      </div>
+    </div>
+    <div class="d-sb-countdown">
+      <div class="d-sb-cd-label">Race Day</div>
+      <div class="d-sb-cd-days" id="sb-days">—</div>
+      <div class="d-sb-cd-race">Days to MCM · Oct 26</div>
+      <div class="d-sb-progress"><div class="d-sb-progress-fill" id="sb-progress-fill" style="width:47%"></div></div>
+      <div class="d-sb-progress-meta">
+        <span id="sb-pct-label">47% done</span>
+        <span class="wk">Wk 8/18</span>
+      </div>
+    </div>
+    <nav class="d-sb-nav">
+      <a href="#today-card" class="d-nav-item active" onclick="dSetNav(this)">Today</a>
+      <a href="#week-section" class="d-nav-item" onclick="dSetNav(this)">This Week</a>
+      <a href="#trends-section" class="d-nav-item" onclick="dSetNav(this)">Trends</a>
+      <a href="#maps-section" class="d-nav-item" onclick="dSetNav(this)">Route Maps</a>
+      <a href="#runs-section" class="d-nav-item" onclick="dSetNav(this)">Recent Runs</a>
+      <a href="#manual-log-card" class="d-nav-item" onclick="dSetNav(this)">Log a Run</a>
+    </nav>
+    <div class="d-sb-footer">
+      <div class="d-sb-strava-status">
+        <span class="d-strava-dot" id="sb-dot"></span>
+        <span id="sb-strava-label">Not Connected</span>
+      </div>
+      <button class="btn btn-strava" id="sb-strava-btn" onclick="stravaConnect()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+        Connect Strava
+      </button>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN AREA ──────────────────────────────── -->
+  <div class="d-main">
+    <div class="d-topbar">
+      <span class="d-topbar-title">MCM Training Dashboard</span>
+      <div class="d-topbar-right">
+        <div class="d-topbar-strava">
+          <span class="d-topbar-dot" id="topbar-dot"></span>
+          <span id="topbar-strava-label">Strava</span>
+        </div>
+        <button class="btn btn-strava" id="topbar-strava-btn" onclick="stravaConnect()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+          Connect
+        </button>
+      </div>
+    </div>
+
+
 
 <!-- ═══════════════════════════════════════════════
      HEADER
@@ -972,8 +1157,8 @@
     <div id="countdown-card" class="card">
       <div>
         <div class="countdown-eyebrow">Race Day Countdown</div>
-        <div class="countdown-race-name">Marine Corps Marathon 2025</div>
-        <div class="countdown-date-label">October 26, 2025 · Washington D.C.</div>
+        <div class="countdown-race-name">Marine Corps Marathon 2026</div>
+        <div class="countdown-date-label">October 26, 2026 · Washington D.C.</div>
       </div>
       <div id="countdown-display" class="countdown-digits">
         <div class="cd-unit">
@@ -1028,7 +1213,7 @@
   <!-- ── 7-DAY STRIP ── -->
   <div>
     <div class="section-label">
-      <h2>This Week</h2>
+      <h2 id="week-section">This Week</h2>
       <div class="line"></div>
       <span class="text-muted text-sm" id="week-range"></span>
     </div>
@@ -1040,7 +1225,7 @@
   <!-- ── TRENDS ── -->
   <div>
     <div class="section-label">
-      <h2>Training Trends</h2>
+      <h2 id="trends-section">Training Trends</h2>
       <div class="line"></div>
       <span class="text-muted text-sm">Last 8 weeks</span>
     </div>
@@ -1100,7 +1285,7 @@
   <!-- ── MAPS ── -->
   <div>
     <div class="section-label">
-      <h2>Maps</h2>
+      <h2 id="maps-section">Maps</h2>
       <div class="line"></div>
     </div>
     <div class="maps-grid">
@@ -1177,7 +1362,7 @@
     </div>
 
     <!-- Recent Runs -->
-    <div class="card">
+    <div class="card" id="runs-section">
       <div class="card-label" style="margin-bottom:0.875rem">Recent Runs</div>
       <div class="runs-list" id="runs-list">
         <div class="runs-empty">Loading runs from Strava…</div>
@@ -1234,6 +1419,8 @@
   </div><!-- /bottom-grid -->
 
 </main>
+  </div><!-- /d-main -->
+</div><!-- /app-shell -->
 
 <!-- Toast -->
 <div id="toast"></div>
@@ -1244,7 +1431,7 @@
 // ╚══════════════════════════════════════════════════════════════╝
 
 const API = 'https://mcm-strava-worker.tyleresterly.workers.dev';
-const RACE_DATE = new Date('2025-10-26T07:00:00-04:00'); // MCM start time (EDT)
+const RACE_DATE = new Date('2026-10-26T07:00:00-04:00'); // MCM start time (EDT)
 
 // ── State ──────────────────────────────────────────────────────
 let state = {
@@ -1283,24 +1470,40 @@ function stravaConnect() {
   window.location.href = `${API}/strava/auth`;
 }
 
+function applyStravaConnected(data) {
+  state.athlete = data;
+  const statusEl = document.getElementById('strava-status');
+  const textEl   = document.getElementById('strava-status-text');
+  const btnEl    = document.getElementById('strava-connect-btn');
+  if (statusEl) statusEl.classList.add('connected');
+  if (textEl)   textEl.textContent = data.firstname || 'Connected';
+  if (btnEl)  { btnEl.textContent = '✓ Strava'; btnEl.style.background = '#2e7d32'; btnEl.style.borderColor = '#2e7d32'; btnEl.onclick = null; }
+}
+
 async function checkStravaStatus() {
+  // Restore from cache immediately so there's no "Not Connected" flash on reload
+  const cached = localStorage.getItem('strava_athlete');
+  if (cached) {
+    try { applyStravaConnected(JSON.parse(cached)); } catch(e) {}
+  }
   try {
     const res = await fetch(`${API}/strava/athlete`, { credentials: 'include' });
     if (res.ok) {
       const data = await res.json();
-      state.athlete = data;
-      const statusEl = document.getElementById('strava-status');
-      const textEl   = document.getElementById('strava-status-text');
-      const btnEl    = document.getElementById('strava-connect-btn');
-      statusEl.classList.add('connected');
-      textEl.textContent = `${data.firstname || 'Connected'}`;
-      btnEl.textContent = '✓ Strava';
-      btnEl.style.background = '#2e7d32';
-      btnEl.style.borderColor = '#2e7d32';
-      btnEl.onclick = null;
+      localStorage.setItem('strava_athlete', JSON.stringify(data)); // persist for next load
+      applyStravaConnected(data);
       return true;
     }
   } catch(e) {}
+  // Session expired — clear cache and reset UI
+  localStorage.removeItem('strava_athlete');
+  state.athlete = null;
+  const statusEl = document.getElementById('strava-status');
+  const textEl   = document.getElementById('strava-status-text');
+  const btnEl    = document.getElementById('strava-connect-btn');
+  if (statusEl) statusEl.classList.remove('connected');
+  if (textEl)   textEl.textContent = 'Not Connected';
+  if (btnEl)  { btnEl.textContent = 'Connect Strava'; btnEl.style.background = ''; btnEl.style.borderColor = ''; btnEl.onclick = stravaConnect; }
   return false;
 }
 
@@ -1312,7 +1515,7 @@ function updateCountdown() {
   if (diff <= 0) {
     document.getElementById('countdown-display').innerHTML =
       `<div class="countdown-race-complete">🏅 Race Complete!</div>`;
-    document.querySelector('.countdown-eyebrow').textContent = 'Marine Corps Marathon 2025';
+    document.querySelector('.countdown-eyebrow').textContent = 'Marine Corps Marathon 2026';
     return;
   }
 
@@ -2090,6 +2293,79 @@ async function init() {
 }
 
 init();
+</script>
+
+<script>
+// ── Direction D sidebar helpers ──────────────────────────────
+function dSetNav(el) {
+  document.querySelectorAll('.d-nav-item').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Sync Strava connection status to sidebar + topbar
+function dSyncStrava() {
+  const mainStatus = document.getElementById('strava-status');
+  const mainText   = document.getElementById('strava-status-text');
+  if (!mainStatus || !mainText) return;
+  const connected = mainStatus.classList.contains('connected');
+  const label = connected ? mainText.textContent : 'Not Connected';
+
+  // Sidebar
+  const sbDot = document.getElementById('sb-dot');
+  const sbLbl = document.getElementById('sb-strava-label');
+  const sbBtn = document.getElementById('sb-strava-btn');
+  if (sbDot) { if (connected) sbDot.classList.add('on'); else sbDot.classList.remove('on'); }
+  if (sbLbl) sbLbl.textContent = label;
+  if (sbBtn && connected) { sbBtn.innerHTML = '✓ ' + label; sbBtn.style.background = '#2e7d32'; sbBtn.style.borderColor = '#2e7d32'; sbBtn.onclick = null; }
+
+  // Topbar
+  const tbDot = document.getElementById('topbar-dot');
+  const tbLbl = document.getElementById('topbar-strava-label');
+  const tbBtn = document.getElementById('topbar-strava-btn');
+  if (tbDot) { if (connected) tbDot.classList.add('on'); else tbDot.classList.remove('on'); }
+  if (tbLbl) tbLbl.textContent = connected ? label : 'Strava';
+  if (tbBtn && connected) { tbBtn.innerHTML = '✓ ' + label; tbBtn.style.background = '#2e7d32'; tbBtn.style.borderColor = '#2e7d32'; tbBtn.onclick = null; }
+}
+
+// Sync countdown days to sidebar
+function dSyncCountdown() {
+  const cdDays = document.getElementById('cd-days');
+  const sbDays = document.getElementById('sb-days');
+  if (cdDays && sbDays && cdDays.textContent !== '--') {
+    sbDays.textContent = cdDays.textContent;
+  }
+}
+
+// Highlight active nav on scroll
+function dSyncActiveNav() {
+  const sections = [
+    { id: 'today-card',      link: 'Today'       },
+    { id: 'week-section',    link: 'This Week'   },
+    { id: 'trends-section',  link: 'Trends'      },
+    { id: 'maps-section',    link: 'Route Maps'  },
+    { id: 'runs-section',    link: 'Recent Runs' },
+    { id: 'manual-log-card', link: 'Log a Run'   },
+  ];
+  const container = document.querySelector('.page-container');
+  if (!container) return;
+  const scrollTop = container.scrollTop;
+  let active = sections[0];
+  for (const s of sections) {
+    const el = document.getElementById(s.id);
+    if (el && el.offsetTop - container.offsetTop <= scrollTop + 80) active = s;
+  }
+  document.querySelectorAll('.d-nav-item').forEach(a => {
+    a.classList.toggle('active', a.textContent.trim() === active.link);
+  });
+}
+
+// Run on load + interval
+document.addEventListener('DOMContentLoaded', () => {
+  dSyncCountdown();
+  const pc = document.querySelector('.page-container');
+  if (pc) pc.addEventListener('scroll', dSyncActiveNav);
+});
+setInterval(() => { dSyncStrava(); dSyncCountdown(); }, 800);
 </script>
 </body>
 </html>
