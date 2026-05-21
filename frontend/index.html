@@ -1058,6 +1058,272 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
 .page-container::-webkit-scrollbar-track { background: #F6F6F6; }
 .page-container::-webkit-scrollbar-thumb { background: #D8D8D6; }
 </style>
+
+<style id="mobile-shell-css">
+/* ══ MOBILE SHELL (≤768px only) ══════════════════════════════════ */
+#mobile-shell {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #F6F6F6;
+  flex-direction: column;
+  z-index: 9999;
+  font-family: 'League Spartan','Arial Black',sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+@media (max-width: 768px) {
+  .app-shell { display: none !important; }
+  body { overflow: hidden !important; }
+  #mobile-shell { display: flex !important; }
+}
+
+/* ── Tabs ─────────────────────────────────────────── */
+.m-tab { display: none; flex: 1; overflow-y: auto; flex-direction: column; -webkit-overflow-scrolling: touch; }
+.m-tab.m-active { display: flex; }
+
+/* ── Bottom Nav ──────────────────────────────────── */
+#m-bottom-nav {
+  height: 80px; background: #fff; border-top: 1px solid #ECECEC;
+  display: flex; align-items: flex-start; padding-top: 10px;
+  flex-shrink: 0;
+}
+.m-nav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 3px; background: none; border: none; cursor: pointer; padding: 0;
+}
+.m-nav-icon { font-size: 19px; line-height: 1; color: #6E6C70; }
+.m-nav-btn.m-nav-active .m-nav-icon { color: #302E32; font-weight: 900; }
+.m-nav-label {
+  font-family: 'League Spartan',sans-serif; font-size: 7px; font-weight: 500;
+  color: #6E6C70; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.m-nav-btn.m-nav-active .m-nav-label { color: #302E32; font-weight: 800; }
+.m-nav-dot { width: 4px; height: 4px; border-radius: 50%; background: transparent; }
+.m-nav-btn.m-nav-active .m-nav-dot { background: #BADA55; }
+
+/* ── Typography helpers ──────────────────────────── */
+.m-brow {
+  font-family: 'League Spartan',sans-serif; font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.16em; color: #6E6C70;
+}
+.m-brow.dark { color: rgba(255,255,255,0.42); }
+.m-mono { font-family: 'JetBrains Mono',monospace; }
+.m-ls { font-family: 'League Spartan',sans-serif; }
+
+/* ── Today tab ───────────────────────────────────── */
+#m-today .m-header {
+  padding: 12px 20px 10px; display: flex; justify-content: space-between;
+  align-items: center; flex-shrink: 0;
+}
+.m-avatar {
+  width: 34px; height: 34px; border-radius: 50%; background: #BADA55;
+  font-family: 'League Spartan',sans-serif; font-size: 13px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center; color: #302E32;
+}
+.m-date-sub { font-family: 'JetBrains Mono',monospace; font-size: 9px; color: #6E6C70; text-transform: uppercase; letter-spacing: 0.1em; }
+.m-greeting { font-family: 'League Spartan',sans-serif; font-size: 18px; font-weight: 900; line-height: 1; letter-spacing: -0.01em; }
+.m-cd-chip {
+  margin: 0 20px 10px; padding: 7px 12px; background: #302E32;
+  display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+}
+.m-cd-chip-label { font-family: 'JetBrains Mono',monospace; font-size: 8px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; }
+.m-cd-chip-days { font-family: 'League Spartan',sans-serif; font-size: 16px; font-weight: 900; color: #BADA55; }
+.m-mission-card {
+  margin: 0 20px; background: #fff; padding: 16px 18px;
+  box-shadow: 0 2px 8px rgba(48,46,50,0.07); flex-shrink: 0;
+}
+.m-mission-title {
+  font-family: 'League Spartan',sans-serif; font-size: 28px; font-weight: 900;
+  line-height: 0.95; letter-spacing: -0.02em; margin: 8px 0 10px;
+}
+.m-mission-title em { font-family: 'Playfair Display',Georgia,serif; font-style: italic; font-size: 24px; font-weight: 400; }
+.m-mission-stats {
+  display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid #ECECEC;
+  padding-top: 10px; margin-bottom: 12px;
+}
+.m-mission-stat { text-align: center; }
+.m-mission-stat-v { font-family: 'League Spartan',sans-serif; font-size: 18px; font-weight: 800; line-height: 1; }
+.m-mission-stat-l { font-family: 'JetBrains Mono',monospace; font-size: 7px; color: #6E6C70; text-transform: uppercase; margin-top: 2px; }
+.m-mission-btns { display: flex; gap: 8px; }
+.m-btn-did {
+  flex: 1.5; padding: 11px 0; background: #302E32; display: flex; align-items: center;
+  justify-content: center; font-family: 'League Spartan',sans-serif; font-size: 10px;
+  font-weight: 700; color: #BADA55; text-transform: uppercase; letter-spacing: 0.08em;
+  border: none; cursor: pointer;
+}
+.m-btn-skip {
+  flex: 1; padding: 11px 0; border: 1.5px solid #302E32; background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'League Spartan',sans-serif; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer;
+}
+.m-mission-done .m-btn-did { background: #BADA55; color: #302E32; }
+.m-mission-skip .m-btn-skip { background: #302E32; color: #BADA55; border-color: #302E32; }
+.m-weather {
+  margin: 10px 20px; padding: 10px 14px; background: #fff;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 1px 4px rgba(48,46,50,0.05); flex-shrink: 0;
+}
+.m-weather-icon { font-size: 22px; }
+.m-weather-info { flex: 1; }
+.m-weather-temp { font-family: 'League Spartan',sans-serif; font-size: 14px; font-weight: 800; }
+.m-weather-sub { font-family: 'JetBrains Mono',monospace; font-size: 8px; color: #6E6C70; }
+.m-weather-badge {
+  background: rgba(186,218,85,0.2); border: 1px solid #BADA55; padding: 3px 8px;
+  font-family: 'League Spartan',sans-serif; font-size: 8px; font-weight: 700; color: #302E32;
+}
+.m-week-section { margin: 0 20px 16px; flex-shrink: 0; }
+.m-week-section .m-brow { margin-bottom: 6px; }
+.m-week-strip { display: flex; gap: 5px; }
+.m-day-cell {
+  flex: 1; padding: 6px 0; display: flex; flex-direction: column;
+  align-items: center; gap: 2px;
+}
+.m-day-lbl { font-family: 'JetBrains Mono',monospace; font-size: 7px; }
+.m-day-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+/* ── Week tab ────────────────────────────────────── */
+#m-week .m-content-pad { padding: 12px 20px; display: flex; flex-direction: column; gap: 12px; }
+.m-progress-card {
+  background: #fff; padding: 14px 16px; box-shadow: 0 2px 6px rgba(48,46,50,0.05); flex-shrink: 0;
+}
+.m-progress-hd { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.m-progress-num { font-family: 'League Spartan',sans-serif; font-size: 32px; font-weight: 900; line-height: 1; }
+.m-progress-denom { font-size: 14px; font-weight: 500; color: #6E6C70; }
+.m-progress-pct { font-family: 'JetBrains Mono',monospace; font-size: 9px; color: #BADA55; }
+.m-prog-bar { height: 8px; background: #D8D8D6; overflow: hidden; }
+.m-prog-bar-fill { height: 100%; background: #BADA55; }
+.m-7day-grid {
+  display: grid; grid-template-columns: repeat(7,1fr); gap: 5px; flex-shrink: 0;
+}
+.m-7day-cell {
+  background: #fff; border: 1px solid #ECECEC; padding: 8px 4px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.m-7day-cell.today { background: rgba(186,218,85,0.15); border-color: #BADA55; }
+.m-7day-d { font-family: 'JetBrains Mono',monospace; font-size: 7px; color: #6E6C70; font-weight: 400; }
+.m-7day-cell.today .m-7day-d { color: #302E32; font-weight: 700; }
+.m-7day-type { font-family: 'League Spartan',sans-serif; font-size: 7.5px; font-weight: 700; text-align: center; line-height: 1.2; color: #302E32; }
+.m-7day-mi { font-family: 'JetBrains Mono',monospace; font-size: 7px; color: #6E6C70; }
+.m-7day-dot { width: 4px; height: 4px; border-radius: 50%; background: #D8D8D6; }
+.m-7day-cell.today .m-7day-dot { background: rgba(186,218,85,0.5); }
+.m-7day-cell.done .m-7day-dot { background: #BADA55; }
+.m-next-card {
+  background: #fff; padding: 13px 15px; box-shadow: 0 2px 6px rgba(48,46,50,0.05); flex-shrink: 0;
+}
+.m-next-title { font-family: 'League Spartan',sans-serif; font-size: 20px; font-weight: 900; }
+.m-next-stats { display: flex; gap: 14px; margin-top: 6px; }
+.m-next-stat-v { font-family: 'League Spartan',sans-serif; font-size: 14px; font-weight: 800; }
+.m-next-stat-l { font-family: 'JetBrains Mono',monospace; font-size: 7px; color: #6E6C70; text-transform: uppercase; margin-top: 1px; }
+.m-hrz-card { background: #fff; padding: 13px 15px; box-shadow: 0 2px 6px rgba(48,46,50,0.05); flex: 1; }
+.m-hrz-bars { display: flex; align-items: flex-end; gap: 4px; height: 70px; }
+.m-hrz-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.m-hrz-pct { font-family: 'JetBrains Mono',monospace; font-size: 6.5px; color: #6E6C70; }
+.m-hrz-bar { width: 100%; border-radius: 2px 2px 0 0; min-height: 2px; }
+.m-hrz-lbl { font-family: 'JetBrains Mono',monospace; font-size: 6.5px; color: #6E6C70; }
+
+/* ── Log Run tab ─────────────────────────────────── */
+#m-logrun .m-content-pad { padding: 12px 20px; display: flex; flex-direction: column; gap: 12px; }
+.m-logrun-title { font-family: 'League Spartan',sans-serif; font-size: 20px; font-weight: 900; flex-shrink: 0; }
+.m-type-pills { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+.m-type-pill {
+  padding: 5px 13px; border: 1.5px solid #302E32; border-radius: 999px;
+  font-family: 'League Spartan',sans-serif; font-size: 8px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.07em; color: #302E32;
+  background: transparent; cursor: pointer; white-space: nowrap;
+}
+.m-type-pill.selected { background: #BADA55; border-color: #BADA55; }
+.m-inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex-shrink: 0; }
+.m-input-box { }
+.m-input-field {
+  padding: 11px 13px; background: #fff; border: 1.5px solid #D8D8D6;
+  font-family: 'League Spartan',sans-serif; font-size: 15px; font-weight: 700;
+  width: 100%; box-sizing: border-box;
+}
+.m-input-field.highlight { background: rgba(186,218,85,0.12); border-color: #BADA55; font-weight: 800; }
+.m-rpe-row { display: flex; gap: 3px; flex-shrink: 0; }
+.m-rpe-btn {
+  flex: 1; height: 36px; display: flex; align-items: center; justify-content: center;
+  font-family: 'League Spartan',sans-serif; font-size: 11px; font-weight: 800;
+  border: 1px solid #D8D8D6; background: #ECECEC; color: #D8D8D6; cursor: pointer;
+}
+.m-rpe-btn.active { background: #BADA55; border-color: #BADA55; color: #302E32; }
+.m-notes-area {
+  padding: 10px 12px; background: #fff; border: 1.5px solid #D8D8D6;
+  font-family: 'League Spartan',sans-serif; font-size: 11px; color: #6E6C70;
+  min-height: 70px; flex: 1; resize: none; width: 100%; box-sizing: border-box;
+}
+.m-log-btns { display: flex; gap: 8px; flex-shrink: 0; }
+.m-btn-log {
+  flex: 2; padding: 13px 0; background: #302E32; display: flex; align-items: center;
+  justify-content: center; font-family: 'League Spartan',sans-serif; font-size: 11px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #BADA55;
+  border: none; cursor: pointer;
+}
+.m-btn-cancel {
+  flex: 1; padding: 13px 0; border: 1.5px solid #302E32; background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'League Spartan',sans-serif; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer;
+}
+
+/* ── Trends tab ──────────────────────────────────── */
+.m-readiness-hero {
+  background: #302E32; padding: 16px 20px 18px; flex-shrink: 0;
+}
+.m-readiness-score { display: flex; align-items: flex-end; gap: 10px; margin: 8px 0 6px; }
+.m-readiness-num {
+  font-family: 'League Spartan',sans-serif; font-size: 64px; font-weight: 900;
+  color: #BADA55; line-height: 0.9; letter-spacing: -0.03em;
+}
+.m-readiness-denom { font-family: 'League Spartan',sans-serif; font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.2; }
+.m-readiness-tag { font-family: 'JetBrains Mono',monospace; font-size: 8px; color: #BADA55; text-transform: uppercase; letter-spacing: 0.1em; }
+.m-readiness-vitals {
+  display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;
+}
+.m-vital-v { font-family: 'League Spartan',sans-serif; font-size: 13px; font-weight: 800; color: #fff; line-height: 1; text-align: center; }
+.m-vital-l { font-family: 'JetBrains Mono',monospace; font-size: 7px; color: rgba(255,255,255,0.35); text-transform: uppercase; margin-top: 2px; text-align: center; }
+.m-metrics-list { flex: 1; padding: 12px 20px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+.m-metric-card { background: #fff; padding: 11px 14px; box-shadow: 0 2px 6px rgba(48,46,50,0.05); }
+.m-metric-hd { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.m-metric-val { font-family: 'League Spartan',sans-serif; font-size: 16px; font-weight: 900; }
+.m-metric-sub { font-family: 'JetBrains Mono',monospace; font-size: 7.5px; color: #6E6C70; margin-top: 4px; }
+.m-load-card { background: #fff; padding: 11px 14px; box-shadow: 0 2px 6px rgba(48,46,50,0.05); }
+.m-load-hd { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.m-load-val { font-family: 'League Spartan',sans-serif; font-size: 18px; font-weight: 800; }
+.m-load-unit { font-size: 10px; color: #6E6C70; font-weight: 400; }
+.m-load-tag { font-family: 'JetBrains Mono',monospace; font-size: 8px; color: #BADA55; }
+
+/* ── More tab (Recent Runs) ──────────────────────── */
+.m-runs-header { padding: 12px 20px 8px; flex-shrink: 0; }
+.m-runs-title { font-family: 'League Spartan',sans-serif; font-size: 20px; font-weight: 900; margin-bottom: 10px; }
+.m-filter-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.m-filter-pill {
+  padding: 5px 12px; border: 1px solid #ECECEC; border-radius: 999px;
+  font-family: 'League Spartan',sans-serif; font-size: 8.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; cursor: pointer;
+  background: #fff; color: #6E6C70;
+}
+.m-filter-pill.active { background: #302E32; color: #BADA55; border-color: #302E32; }
+.m-runs-list { flex: 1; overflow-y: auto; padding: 0 20px 16px; display: flex; flex-direction: column; gap: 8px; }
+.m-run-card {
+  background: #fff; padding: 12px 14px; box-shadow: 0 2px 6px rgba(48,46,50,0.05);
+  display: flex; gap: 12px; align-items: center;
+}
+.m-run-body { flex: 1; }
+.m-run-date { font-family: 'JetBrains Mono',monospace; font-size: 7.5px; color: #6E6C70; margin-bottom: 1px; }
+.m-run-type { font-family: 'League Spartan',sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6E6C70; margin-bottom: 3px; }
+.m-run-dist { font-family: 'League Spartan',sans-serif; font-size: 26px; font-weight: 900; line-height: 1; }
+.m-run-dist-unit { font-size: 11px; font-weight: 500; color: #6E6C70; }
+.m-run-meta { display: flex; gap: 10px; margin-top: 5px; }
+.m-run-meta-v { font-family: 'League Spartan',sans-serif; font-size: 11px; font-weight: 700; }
+.m-run-meta-l { font-family: 'JetBrains Mono',monospace; font-size: 7px; color: #6E6C70; text-transform: uppercase; margin-top: 1px; }
+.m-run-right { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.m-pr-badge { background: #BADA55; font-family: 'JetBrains Mono',monospace; font-size: 7px; font-weight: 700; padding: 2px 6px; text-transform: uppercase; }
+.m-run-chevron { font-family: 'JetBrains Mono',monospace; font-size: 8px; color: #6E6C70; }
+.m-empty-runs { padding: 2rem; text-align: center; color: #6E6C70; font-family: 'JetBrains Mono',monospace; font-size: 0.8rem; }
+</style>
+
 </head>
 <body>
 <div class="app-shell">
@@ -1421,6 +1687,317 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
 </main>
   </div><!-- /d-main -->
 </div><!-- /app-shell -->
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MOBILE SHELL (shown on ≤768px, hidden on desktop)             -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="mobile-shell">
+
+  <!-- ── TAB 1: TODAY ─────────────────────────────────────────── -->
+  <div id="m-today" class="m-tab m-active">
+    <div class="m-header">
+      <div>
+        <div class="m-date-sub" id="m-today-date">Mon, May 19</div>
+        <div class="m-greeting">Good morning, <span id="m-athlete-name">Tyler</span>.</div>
+      </div>
+      <div class="m-avatar" id="m-avatar-initials">TE</div>
+    </div>
+
+    <div class="m-cd-chip">
+      <span class="m-cd-chip-label">MCM Race Day</span>
+      <span class="m-cd-chip-days"><span id="m-cd-num">–</span> days</span>
+    </div>
+
+    <div class="m-mission-card" id="m-mission-card">
+      <div class="m-brow">Today's Mission</div>
+      <div class="m-mission-title">
+        Easy Run<br><em>5 miles</em>
+      </div>
+      <div class="m-mission-stats">
+        <div class="m-mission-stat">
+          <div class="m-mission-stat-v">5</div>
+          <div class="m-mission-stat-l">MI</div>
+        </div>
+        <div class="m-mission-stat">
+          <div class="m-mission-stat-v">9:30</div>
+          <div class="m-mission-stat-l">PACE</div>
+        </div>
+        <div class="m-mission-stat">
+          <div class="m-mission-stat-v">47</div>
+          <div class="m-mission-stat-l">MIN</div>
+        </div>
+        <div class="m-mission-stat">
+          <div class="m-mission-stat-v">Z2</div>
+          <div class="m-mission-stat-l">HR</div>
+        </div>
+      </div>
+      <div class="m-mission-btns">
+        <button class="m-btn-did" onclick="mMarkToday('done')">✓ I Did It</button>
+        <button class="m-btn-skip" onclick="mMarkToday('skip')">Skip</button>
+      </div>
+    </div>
+
+    <div class="m-weather">
+      <div class="m-weather-icon">☀</div>
+      <div class="m-weather-info">
+        <div class="m-weather-temp">72°F · Partly Cloudy</div>
+        <div class="m-weather-sub">Wind 8 mph · Humidity 45%</div>
+      </div>
+      <div class="m-weather-badge">GOOD</div>
+    </div>
+
+    <div class="m-week-section">
+      <div class="m-brow">This Week</div>
+      <div class="m-week-strip" id="m-week-dots-today">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB 2: WEEK ──────────────────────────────────────────── -->
+  <div id="m-week" class="m-tab">
+    <div class="m-content-pad">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-shrink:0">
+        <div style="font-family:'League Spartan',sans-serif;font-size:20px;font-weight:900">This Week</div>
+        <div class="m-mono" style="font-size:8px;color:#6E6C70" id="m-week-range">Wk —</div>
+      </div>
+
+      <div class="m-progress-card">
+        <div class="m-progress-hd">
+          <div>
+            <span class="m-progress-num" id="m-week-mi">0</span>
+            <span class="m-mono m-progress-denom"> / <span id="m-week-target">35</span> mi</span>
+          </div>
+          <div class="m-progress-pct" id="m-week-pct">0%</div>
+        </div>
+        <div class="m-prog-bar"><div class="m-prog-bar-fill" id="m-week-bar" style="width:0%"></div></div>
+      </div>
+
+      <div class="m-7day-grid" id="m-7day-grid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="m-next-card">
+        <div class="m-brow" id="m-next-label" style="margin-bottom:6px">Tomorrow</div>
+        <div class="m-next-title" id="m-next-type">Tempo Run</div>
+        <div class="m-next-stats">
+          <div>
+            <div class="m-next-stat-v">6 mi</div>
+            <div class="m-next-stat-l">Dist</div>
+          </div>
+          <div>
+            <div class="m-next-stat-v">8:30</div>
+            <div class="m-next-stat-l">Pace</div>
+          </div>
+          <div>
+            <div class="m-next-stat-v">Z3–4</div>
+            <div class="m-next-stat-l">Zone</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-hrz-card">
+        <div class="m-brow" style="margin-bottom:8px">HR Zones — Latest Run</div>
+        <div class="m-hrz-bars" id="m-hrz-bars">
+          <div class="m-hrz-col">
+            <div class="m-hrz-pct">12%</div>
+            <div class="m-hrz-bar" style="height:16px;background:#e0e0de"></div>
+            <div class="m-hrz-lbl">Z1</div>
+          </div>
+          <div class="m-hrz-col">
+            <div class="m-hrz-pct">45%</div>
+            <div class="m-hrz-bar" style="height:59px;background:#BADA55"></div>
+            <div class="m-hrz-lbl">Z2</div>
+          </div>
+          <div class="m-hrz-col">
+            <div class="m-hrz-pct">28%</div>
+            <div class="m-hrz-bar" style="height:36px;background:#9ecf25"></div>
+            <div class="m-hrz-lbl">Z3</div>
+          </div>
+          <div class="m-hrz-col">
+            <div class="m-hrz-pct">12%</div>
+            <div class="m-hrz-bar" style="height:16px;background:#6E6C70"></div>
+            <div class="m-hrz-lbl">Z4</div>
+          </div>
+          <div class="m-hrz-col">
+            <div class="m-hrz-pct">3%</div>
+            <div class="m-hrz-bar" style="height:4px;background:#302E32"></div>
+            <div class="m-hrz-lbl">Z5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB 3: LOG A RUN ─────────────────────────────────────── -->
+  <div id="m-logrun" class="m-tab">
+    <div class="m-content-pad">
+      <div class="m-logrun-title">Log a Run</div>
+
+      <div>
+        <div class="m-brow" style="margin-bottom:7px">Workout Type</div>
+        <div class="m-type-pills" id="m-type-pills">
+          <button class="m-type-pill selected" onclick="mSelectType(this,'Easy Run')">Easy Run</button>
+          <button class="m-type-pill" onclick="mSelectType(this,'Tempo')">Tempo</button>
+          <button class="m-type-pill" onclick="mSelectType(this,'Intervals')">Intervals</button>
+          <button class="m-type-pill" onclick="mSelectType(this,'Long Run')">Long Run</button>
+          <button class="m-type-pill" onclick="mSelectType(this,'Recovery')">Recovery</button>
+        </div>
+      </div>
+
+      <div class="m-inputs-grid">
+        <div class="m-input-box">
+          <div class="m-brow" style="margin-bottom:4px">Distance</div>
+          <input class="m-input-field" id="m-dist-input" type="text" value="5.0 mi" />
+        </div>
+        <div class="m-input-box">
+          <div class="m-brow" style="margin-bottom:4px">Duration</div>
+          <input class="m-input-field" id="m-dur-input" type="text" value="46:50" />
+        </div>
+        <div class="m-input-box">
+          <div class="m-brow" style="margin-bottom:4px">Avg Pace</div>
+          <input class="m-input-field highlight" id="m-pace-input" type="text" value="9:22 /mi" />
+        </div>
+        <div class="m-input-box">
+          <div class="m-brow" style="margin-bottom:4px">Avg HR</div>
+          <input class="m-input-field" id="m-hr-input" type="text" value="148 bpm" />
+        </div>
+      </div>
+
+      <div>
+        <div class="m-brow" style="margin-bottom:7px">Effort (RPE)</div>
+        <div class="m-rpe-row" id="m-rpe-row">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <div style="flex:1">
+        <div class="m-brow" style="margin-bottom:5px">Notes</div>
+        <textarea class="m-notes-area" id="m-notes" placeholder="How did it feel?">Felt strong — HR stayed in Z2 the whole time...</textarea>
+      </div>
+
+      <div class="m-log-btns">
+        <button class="m-btn-log" onclick="mSubmitLogRun()">Log This Run →</button>
+        <button class="m-btn-cancel" onclick="mSwitchTab('today')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB 4: TRENDS ─────────────────────────────────────────── -->
+  <div id="m-trends" class="m-tab">
+    <div class="m-readiness-hero">
+      <div class="m-brow dark">Today's Readiness</div>
+      <div class="m-readiness-score">
+        <div class="m-readiness-num">74</div>
+        <div>
+          <div class="m-readiness-denom">/ 100</div>
+          <div class="m-readiness-tag">Good</div>
+        </div>
+      </div>
+      <div class="m-readiness-vitals">
+        <div><div class="m-vital-v">58ms</div><div class="m-vital-l">HRV</div></div>
+        <div><div class="m-vital-v">7.2h</div><div class="m-vital-l">Sleep</div></div>
+        <div><div class="m-vital-v">56bpm</div><div class="m-vital-l">HR</div></div>
+        <div><div class="m-vital-v">84%</div><div class="m-vital-l">Batt</div></div>
+      </div>
+    </div>
+
+    <div class="m-metrics-list">
+      <div class="m-metric-card">
+        <div class="m-metric-hd">
+          <div class="m-brow">VO₂max</div>
+          <div class="m-metric-val">48.2</div>
+        </div>
+        <svg viewBox="0 0 200 32" preserveAspectRatio="none" style="width:100%;height:32px;display:block">
+          <path d="M0,25 L28,22 L56,18 L85,20 L113,15 L141,10 L170,13 L200,8 L200,32 L0,32Z" fill="rgba(186,218,85,0.15)"/>
+          <path d="M0,25 L28,22 L56,18 L85,20 L113,15 L141,10 L170,13 L200,8" fill="none" stroke="#BADA55" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        <div class="m-metric-sub">▲ +1.2 · improving</div>
+      </div>
+
+      <div class="m-metric-card">
+        <div class="m-metric-hd">
+          <div class="m-brow">Resting HR</div>
+          <div class="m-metric-val">56 bpm</div>
+        </div>
+        <svg viewBox="0 0 200 32" preserveAspectRatio="none" style="width:100%;height:32px;display:block">
+          <path d="M0,10 L28,15 L56,12 L85,18 L113,14 L141,19 L170,16 L200,20 L200,32 L0,32Z" fill="rgba(224,85,85,0.08)"/>
+          <path d="M0,10 L28,15 L56,12 L85,18 L113,14 L141,19 L170,16 L200,20" fill="none" stroke="#e05555" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        <div class="m-metric-sub">▼ Down 2 bpm · great</div>
+      </div>
+
+      <div class="m-metric-card">
+        <div class="m-metric-hd">
+          <div class="m-brow">HRV</div>
+          <div class="m-metric-val">58ms</div>
+        </div>
+        <svg viewBox="0 0 200 32" preserveAspectRatio="none" style="width:100%;height:32px;display:block">
+          <path d="M0,22 L28,18 L56,24 L85,14 L113,20 L141,10 L170,16 L200,12 L200,32 L0,32Z" fill="rgba(186,218,85,0.15)"/>
+          <path d="M0,22 L28,18 L56,24 L85,14 L113,20 L141,10 L170,16 L200,12" fill="none" stroke="#BADA55" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        <div class="m-metric-sub">▲ +8ms vs baseline</div>
+      </div>
+
+      <div class="m-load-card">
+        <div class="m-brow" style="margin-bottom:6px">Training Load</div>
+        <div class="m-load-hd">
+          <div class="m-load-val">1.04 <span class="m-load-unit">ATL:CTL</span></div>
+          <div class="m-load-tag">Productive Zone</div>
+        </div>
+        <div class="m-prog-bar"><div class="m-prog-bar-fill" style="width:54%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB 5: MORE (Recent Runs) ──────────────────────────────── -->
+  <div id="m-more" class="m-tab">
+    <div class="m-runs-header">
+      <div class="m-runs-title">Recent Runs</div>
+      <div class="m-filter-pills">
+        <button class="m-filter-pill active" onclick="mFilterRuns(this,'all')">All</button>
+        <button class="m-filter-pill" onclick="mFilterRuns(this,'easy')">Easy</button>
+        <button class="m-filter-pill" onclick="mFilterRuns(this,'tempo')">Tempo</button>
+        <button class="m-filter-pill" onclick="mFilterRuns(this,'long')">Long</button>
+        <button class="m-filter-pill" onclick="mFilterRuns(this,'intervals')">Intervals</button>
+      </div>
+    </div>
+    <div class="m-runs-list" id="m-runs-list">
+      <div class="m-empty-runs">Loading runs…</div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM NAV ───────────────────────────────────────────── -->
+  <nav id="m-bottom-nav">
+    <button class="m-nav-btn m-nav-active" id="mnb-today" onclick="mSwitchTab('today')">
+      <span class="m-nav-icon">◉</span>
+      <span class="m-nav-label">Today</span>
+      <span class="m-nav-dot"></span>
+    </button>
+    <button class="m-nav-btn" id="mnb-week" onclick="mSwitchTab('week')">
+      <span class="m-nav-icon">⬜</span>
+      <span class="m-nav-label">Week</span>
+      <span class="m-nav-dot"></span>
+    </button>
+    <button class="m-nav-btn" id="mnb-logrun" onclick="mSwitchTab('logrun')">
+      <span class="m-nav-icon">⊕</span>
+      <span class="m-nav-label">+ Run</span>
+      <span class="m-nav-dot"></span>
+    </button>
+    <button class="m-nav-btn" id="mnb-trends" onclick="mSwitchTab('trends')">
+      <span class="m-nav-icon">↗</span>
+      <span class="m-nav-label">Trends</span>
+      <span class="m-nav-dot"></span>
+    </button>
+    <button class="m-nav-btn" id="mnb-more" onclick="mSwitchTab('more')">
+      <span class="m-nav-icon">≡</span>
+      <span class="m-nav-label">More</span>
+      <span class="m-nav-dot"></span>
+    </button>
+  </nav>
+</div>
+<!-- /mobile-shell -->
+
 
 <!-- Toast -->
 <div id="toast"></div>
@@ -2365,6 +2942,266 @@ document.addEventListener('DOMContentLoaded', () => {
   const pc = document.querySelector('.page-container');
   if (pc) pc.addEventListener('scroll', dSyncActiveNav);
 });
+
+// ══ MOBILE SHELL LOGIC ════════════════════════════════════════════
+(function() {
+  // ── Tab switching ─────────────────────────────────────────────
+  window.mSwitchTab = function(name) {
+    document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('m-active'));
+    document.querySelectorAll('.m-nav-btn').forEach(b => b.classList.remove('m-nav-active'));
+    const tab = document.getElementById('m-' + name);
+    if (tab) tab.classList.add('m-active');
+    const btn = document.getElementById('mnb-' + name);
+    if (btn) btn.classList.add('m-nav-active');
+    // Refresh runs list when opening More tab
+    if (name === 'more') mRenderRuns('all');
+    if (name === 'week') mRenderWeek();
+  };
+
+  // ── Sync today panel ─────────────────────────────────────────
+  function mSyncToday() {
+    // Date
+    const now = new Date();
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const el = document.getElementById('m-today-date');
+    if (el) el.textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
+
+    // Athlete name
+    if (state.athlete && state.athlete.firstname) {
+      const nameEl = document.getElementById('m-athlete-name');
+      if (nameEl) nameEl.textContent = state.athlete.firstname;
+      const initEl = document.getElementById('m-avatar-initials');
+      if (initEl) {
+        const i = (state.athlete.firstname || 'T')[0] + (state.athlete.lastname || 'E')[0];
+        initEl.textContent = i.toUpperCase();
+      }
+    }
+
+    // Countdown
+    const cdEl = document.getElementById('m-cd-num');
+    if (cdEl) {
+      const diffMs = RACE_DATE - new Date();
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      cdEl.textContent = diffDays > 0 ? diffDays : '0';
+    }
+
+    // Today status (done/skip)
+    const card = document.getElementById('m-mission-card');
+    if (card) {
+      card.classList.remove('m-mission-done', 'm-mission-skip');
+      const today = new Date().toDateString();
+      if (state.todayDate === today) {
+        if (state.todayStatus === 'done') card.classList.add('m-mission-done');
+        else if (state.todayStatus === 'skip') card.classList.add('m-mission-skip');
+      }
+    }
+
+    // Week dots
+    mRenderWeekDots('m-week-dots-today');
+  }
+
+  // ── Week dots renderer ────────────────────────────────────────
+  function mRenderWeekDots(containerId) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    const now = new Date();
+    const dow = now.getDay(); // 0=Sun
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1)); // Mon
+    const labels = ['M','T','W','T','F','S','S'];
+    let html = '';
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(weekStart);
+      d.setDate(weekStart.getDate() + i);
+      const isToday = d.toDateString() === now.toDateString();
+      const isPast = d < now && !isToday;
+      const hasDone = isPast; // placeholder; could check activities
+      const bg = isToday ? 'rgba(186,218,85,0.2)' : '#fff';
+      const border = isToday ? '#BADA55' : '#ECECEC';
+      const dotBg = hasDone ? '#BADA55' : isToday ? 'rgba(186,218,85,0.6)' : '#D8D8D6';
+      const lblColor = isToday ? '#302E32' : '#6E6C70';
+      html += '<div class="m-day-cell" style="background:' + bg + ';border:1px solid ' + border + '">' +
+        '<div class="m-day-lbl" style="color:' + lblColor + ';font-weight:' + (isToday ? 700 : 400) + '">' + labels[i] + '</div>' +
+        '<div class="m-day-dot" style="background:' + dotBg + '"></div>' +
+        '</div>';
+    }
+    el.innerHTML = html;
+  }
+
+  // ── Render week tab ───────────────────────────────────────────
+  window.mRenderWeek = function() {
+    // Weekly miles from activities
+    const now = new Date();
+    const dow = now.getDay();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
+    weekStart.setHours(0,0,0,0);
+
+    let weekMiles = 0;
+    (state.activities || []).forEach(a => {
+      const start = new Date(a.start_date_local || a.start_date);
+      if (start >= weekStart) weekMiles += (a.distance || 0) / 1609.34;
+    });
+
+    const target = 35;
+    const pct = Math.min(Math.round((weekMiles / target) * 100), 100);
+    const el_mi = document.getElementById('m-week-mi');
+    const el_pct = document.getElementById('m-week-pct');
+    const el_bar = document.getElementById('m-week-bar');
+    if (el_mi) el_mi.textContent = weekMiles.toFixed(1);
+    if (el_pct) el_pct.textContent = pct + '% done';
+    if (el_bar) el_bar.style.width = pct + '%';
+
+    // Week range label
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const wkEnd = new Date(weekStart); wkEnd.setDate(weekStart.getDate() + 6);
+    const el_range = document.getElementById('m-week-range');
+    if (el_range) el_range.textContent = months[weekStart.getMonth()] + ' ' + weekStart.getDate() + '–' + wkEnd.getDate();
+
+    // 7-day grid
+    const grid = document.getElementById('m-7day-grid');
+    if (grid) {
+      const PLAN = [
+        ['M','Easy','5'],['T','Tempo','6'],['W','Easy','5'],
+        ['T','Intv','7'],['F','Rest','—'],['S','Long','16'],['S','Rec','2']
+      ];
+      let html = '';
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(weekStart); d.setDate(weekStart.getDate() + i);
+        const isToday = d.toDateString() === now.toDateString();
+        const isPast = d < now && !isToday;
+        const [dl, type, mi] = PLAN[i];
+        html += '<div class="m-7day-cell' + (isToday ? ' today' : '') + (isPast ? ' done' : '') + '">' +
+          '<div class="m-7day-d">' + dl + '</div>' +
+          '<div class="m-7day-type">' + type + '</div>' +
+          '<div class="m-7day-mi">' + mi + '</div>' +
+          '<div class="m-7day-dot"></div>' +
+          '</div>';
+      }
+      grid.innerHTML = html;
+    }
+
+    mRenderWeekDots('m-week-dots-today');
+  };
+
+  // ── Render RPE row ────────────────────────────────────────────
+  function mRenderRPE() {
+    const el = document.getElementById('m-rpe-row');
+    if (!el) return;
+    let selectedRPE = 3;
+    function render(sel) {
+      let html = '';
+      for (let n = 1; n <= 10; n++) {
+        html += '<button class="m-rpe-btn' + (n <= sel ? ' active' : '') + '" onclick="mSetRPE(' + n + ')">' + n + '</button>';
+      }
+      el.innerHTML = html;
+    }
+    window.mSetRPE = function(n) { selectedRPE = n; render(n); };
+    render(selectedRPE);
+  }
+
+  // ── Render runs list ──────────────────────────────────────────
+  window.mRenderRuns = function(filter) {
+    const el = document.getElementById('m-runs-list');
+    if (!el) return;
+    const acts = (state.activities || []).slice(0, 20);
+    if (!acts.length) {
+      el.innerHTML = '<div class="m-empty-runs">Connect Strava to see your runs.</div>';
+      return;
+    }
+    const typeMap = { 'Run': 'Easy Run', 'Run_easy': 'Easy Run', 'Run_tempo': 'Tempo', 'Run_long': 'Long Run', 'Run_intervals': 'Intervals' };
+    let html = '';
+    acts.forEach(a => {
+      const mi = ((a.distance || 0) / 1609.34).toFixed(1);
+      const movingSec = a.moving_time || 0;
+      const h = Math.floor(movingSec / 3600);
+      const m = Math.floor((movingSec % 3600) / 60);
+      const s = movingSec % 60;
+      const timeStr = h > 0 ? h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0') : m + ':' + String(s).padStart(2,'0');
+      const paceSecMi = mi > 0 ? movingSec / parseFloat(mi) : 0;
+      const pm = Math.floor(paceSecMi / 60); const ps = Math.round(paceSecMi % 60);
+      const paceStr = pm > 0 ? pm + ':' + String(ps).padStart(2,'0') : '—';
+      const actDate = new Date(a.start_date_local || a.start_date);
+      const days2 = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const mos = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const dateStr = days2[actDate.getDay()] + ' ' + mos[actDate.getMonth()] + ' ' + actDate.getDate();
+      const actType = a.sport_type || a.type || 'Run';
+      html += '<div class="m-run-card">' +
+        '<div class="m-run-body">' +
+          '<div class="m-run-date">' + dateStr + '</div>' +
+          '<div class="m-run-type">' + actType + '</div>' +
+          '<div class="m-run-dist">' + mi + ' <span class="m-run-dist-unit">mi</span></div>' +
+          '<div class="m-run-meta">' +
+            '<div><div class="m-run-meta-v">' + paceStr + '</div><div class="m-run-meta-l">Pace</div></div>' +
+            '<div><div class="m-run-meta-v">' + timeStr + '</div><div class="m-run-meta-l">Time</div></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="m-run-right">' +
+          '<div class="m-run-chevron">›</div>' +
+        '</div>' +
+        '</div>';
+    });
+    el.innerHTML = html;
+  };
+
+  // ── Filter runs ────────────────────────────────────────────────
+  window.mFilterRuns = function(btn, filter) {
+    document.querySelectorAll('.m-filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    mRenderRuns(filter);
+  };
+
+  // ── Mark today done/skip ──────────────────────────────────────
+  window.mMarkToday = function(status) {
+    state.todayStatus = status;
+    state.todayDate = new Date().toDateString();
+    localStorage.setItem('today_status', status);
+    localStorage.setItem('today_date', state.todayDate);
+    mSyncToday();
+    // Also sync desktop if visible
+    if (typeof renderTodayStatus === 'function') renderTodayStatus();
+  };
+
+  // ── Workout type pill ─────────────────────────────────────────
+  window.mSelectType = function(btn, type) {
+    document.querySelectorAll('.m-type-pill').forEach(p => p.classList.remove('selected'));
+    btn.classList.add('selected');
+  };
+
+  // ── Log run submit ────────────────────────────────────────────
+  window.mSubmitLogRun = function() {
+    const dist = document.getElementById('m-dist-input').value;
+    const dur = document.getElementById('m-dur-input').value;
+    const notes = document.getElementById('m-notes').value;
+    // Show toast and switch back
+    if (typeof showToast === 'function') showToast('Run logged! ' + dist + ' · ' + dur);
+    else alert('Run logged!');
+    mSwitchTab('today');
+  };
+
+  // ── Initial render ────────────────────────────────────────────
+  function mInit() {
+    mRenderRPE();
+    mSyncToday();
+    mRenderWeek();
+  }
+
+  // Run after DOM + after data likely loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    mInit();
+    // Re-sync after a short delay (in case Strava data loads after init)
+    setTimeout(function() {
+      mSyncToday();
+      mRenderRuns('all');
+      mRenderWeek();
+    }, 2500);
+  });
+
+  // Also hook into setInterval to keep countdown live
+  const _origInterval = window.setInterval;
+})();
+
 setInterval(() => { dSyncStrava(); dSyncCountdown(); }, 800);
 </script>
 </body>
