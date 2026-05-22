@@ -1440,7 +1440,7 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
     .d-sb-plan-pct  { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.4); }
 
     /* ── Pre-training week banner ────────────────────────────── */
-    .pretrain-banner { padding: 1.5rem; border: 1.5px dashed var(--border); display: flex; align-items: center; gap: 1rem; }
+    .pretrain-banner { grid-column: 1 / -1; padding: 1.5rem; border: 1.5px dashed var(--border); display: flex; align-items: center; gap: 1rem; }
     .pretrain-banner-icon { font-size: 2.2rem; flex-shrink: 0; }
     .pretrain-banner-text h3 { font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 800; color: var(--ink); margin: 0 0 3px; }
     .pretrain-banner-text p  { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); margin: 0; line-height: 1.5; }
@@ -2798,13 +2798,15 @@ function buildWeeklyData(activities) {
     });
 
     const miles = wActs.reduce((s, a) => s + (a.distance || 0) / 1609.34, 0);
-    const avgPaceSecs = wActs.length > 0
-      ? wActs.reduce((s, a) => {
-          const secs = (a.moving_time || 0);
-          const mi   = (a.distance || 1) / 1609.34;
-          return s + (mi > 0 ? secs / mi : 0);
-        }, 0) / wActs.length
-      : 0;
+    // Compute avg pace only from activities with meaningful distance (>= 0.1 mi)
+    // Using (a.distance || 1) would make 0-distance activities produce ~72000 min/mile
+    let paceSum = 0, paceCount = 0;
+    wActs.forEach(a => {
+      const mi   = (a.distance || 0) / 1609.34;
+      const secs = a.moving_time || 0;
+      if (mi >= 0.1 && secs > 0) { paceSum += secs / mi; paceCount++; }
+    });
+    const avgPaceSecs = paceCount > 0 ? Math.round(paceSum / paceCount) : 0;
     const avgHR = wActs.length > 0
       ? wActs.reduce((s, a) => s + (a.average_heartrate || 0), 0) / wActs.length
       : 0;
