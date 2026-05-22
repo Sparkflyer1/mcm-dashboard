@@ -1392,6 +1392,62 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
 .m-pr-badge { background: #BADA55; font-family: 'JetBrains Mono',monospace; font-size: 7px; font-weight: 700; padding: 2px 6px; text-transform: uppercase; }
 .m-run-chevron { font-family: 'JetBrains Mono',monospace; font-size: 8px; color: #6E6C70; }
 .m-empty-runs { padding: 2rem; text-align: center; color: #6E6C70; font-family: 'JetBrains Mono',monospace; font-size: 0.8rem; }
+
+    /* ── Flip Card ────────────────────────────────────────────── */
+    #today-card { perspective: 1200px; background: transparent !important; box-shadow: none !important; border: none !important; padding: 0 !important; }
+    .today-flip-inner { position: relative; width: 100%; transition: transform 0.55s cubic-bezier(.4,0,.2,1); transform-style: preserve-3d; }
+    .today-flip-inner.flipped { transform: rotateY(180deg); }
+    .card-flip-front, .card-flip-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1.5px solid var(--border); background: var(--paper-w); padding: 1.25rem 1.5rem; box-shadow: 3px 3px 0 var(--border); }
+    .card-flip-back { position: absolute; top: 0; left: 0; width: 100%; transform: rotateY(180deg); background: #1a2e0a !important; display: flex; align-items: center; justify-content: center; min-height: 220px; box-sizing: border-box; }
+    .done-back-wrap { text-align: center; }
+    .done-back-check { font-size: 3rem; color: #BADA55; line-height: 1; margin-bottom: 0.5rem; }
+    .done-back-label { font-family: 'League Spartan', sans-serif; font-size: 1.4rem; font-weight: 900; color: #BADA55; text-transform: uppercase; letter-spacing: 0.04em; }
+    .done-back-type  { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: rgba(186,218,85,0.6); margin: 0.25rem 0 1rem; }
+    .done-back-reset { background: transparent; border: 1px solid rgba(186,218,85,0.35); color: rgba(186,218,85,0.7); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 0.35rem 0.9rem; cursor: pointer; border-radius: 999px; }
+    .done-back-reset:hover { border-color: #BADA55; color: #BADA55; }
+
+    /* ── Skip Confirm Modal ──────────────────────────────────── */
+    .skip-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(48,46,50,0.7); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; }
+    .skip-modal-overlay.open { display: flex; }
+    .skip-modal-box { background: var(--paper-w); border: 1.5px solid var(--border); box-shadow: 5px 5px 0 var(--border); padding: 2rem; max-width: 340px; width: 90%; text-align: center; }
+    .skip-modal-title { font-family: 'League Spartan', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--ink); margin-bottom: 0.35rem; }
+    .skip-modal-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
+    .skip-modal-btns { display: flex; gap: 0.75rem; justify-content: center; }
+    .skip-confirm-btn { background: #302E32; color: #fff; border: none; padding: 0.6rem 1.5rem; font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+    .skip-cancel-btn  { background: transparent; border: 1.5px solid var(--border); color: var(--ink); padding: 0.6rem 1.5rem; font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+
+    /* ── Sidebar weather widget ──────────────────────────────── */
+    .d-sb-weather { padding: 10px 16px 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .d-sb-wx-top  { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+    .d-sb-wx-icon { font-size: 20px; line-height: 1; }
+    .d-sb-wx-temp { font-family: 'League Spartan', sans-serif; font-size: 26px; font-weight: 900; color: #BADA55; line-height: 1; }
+    .d-sb-wx-unit { font-size: 12px; color: rgba(255,255,255,0.35); align-self: flex-start; margin-top: 3px; }
+    .d-sb-wx-cond { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+    .d-sb-wx-stats { display: flex; gap: 10px; }
+    .d-sb-wx-stat  { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: rgba(255,255,255,0.3); }
+    .d-sb-wx-stat span { color: rgba(255,255,255,0.6); }
+    .d-sb-wx-badge { display: inline-block; margin-top: 5px; font-family: 'JetBrains Mono', monospace; font-size: 8px; padding: 2px 7px; border-radius: 999px; font-weight: 700; text-transform: uppercase; }
+    .d-sb-wx-badge.wx-good   { background: rgba(186,218,85,0.2); color: #BADA55; }
+    .d-sb-wx-badge.wx-fair   { background: rgba(255,193,7,0.2);  color: #ffc107; }
+    .d-sb-wx-badge.wx-tough  { background: rgba(255,87,34,0.2);  color: #ff5722; }
+    .d-sb-wx-badge.wx-inside { background: rgba(255,0,0,0.2);    color: #ff4444; }
+
+    /* ── Sidebar plan progress (replaces big countdown block) ── */
+    .d-sb-plan { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .d-sb-plan-meta { font-family: 'JetBrains Mono', monospace; font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+    .d-sb-plan-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+    .d-sb-plan-week { font-family: 'League Spartan', sans-serif; font-size: 15px; font-weight: 900; color: #fff; }
+    .d-sb-plan-pct  { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.4); }
+
+    /* ── Pre-training week banner ────────────────────────────── */
+    .pretrain-banner { padding: 1.5rem; border: 1.5px dashed var(--border); display: flex; align-items: center; gap: 1rem; }
+    .pretrain-banner-icon { font-size: 2.2rem; flex-shrink: 0; }
+    .pretrain-banner-text h3 { font-family: 'League Spartan', sans-serif; font-size: 1rem; font-weight: 800; color: var(--ink); margin: 0 0 3px; }
+    .pretrain-banner-text p  { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); margin: 0; line-height: 1.5; }
+
+    /* ── Chart hover cursor ──────────────────────────────────── */
+    .trend-chart { cursor: crosshair !important; }
+
 </style>
 
 </head>
@@ -1407,15 +1463,28 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
         <div class="d-sb-sub">Marathon Training</div>
       </div>
     </div>
-    <div class="d-sb-countdown">
-      <div class="d-sb-cd-label">Race Day</div>
-      <div class="d-sb-cd-days" id="sb-days">—</div>
-      <div class="d-sb-cd-race">Days to MCM · Oct 26</div>
-      <div class="d-sb-progress"><div class="d-sb-progress-fill" id="sb-progress-fill" style="width:47%"></div></div>
-      <div class="d-sb-progress-meta">
-        <span id="sb-pct-label">47% done</span>
-        <span class="wk">Wk 8/18</span>
+    <!-- Sidebar Weather -->
+    <div class="d-sb-weather">
+      <div class="d-sb-wx-top">
+        <span class="d-sb-wx-icon" id="sb-wx-icon">—</span>
+        <span class="d-sb-wx-temp" id="sb-wx-temp">—</span>
+        <span class="d-sb-wx-unit">°F</span>
       </div>
+      <div class="d-sb-wx-cond" id="sb-wx-cond">Loading…</div>
+      <div class="d-sb-wx-stats">
+        <div class="d-sb-wx-stat">Humidity <span id="sb-wx-hum">—</span></div>
+        <div class="d-sb-wx-stat">Wind <span id="sb-wx-wind">—</span></div>
+      </div>
+      <div class="d-sb-wx-badge" id="sb-wx-badge"></div>
+    </div>
+    <!-- Sidebar Plan Progress -->
+    <div class="d-sb-plan">
+      <div class="d-sb-plan-meta">18-Week Plan · MCM Oct 26</div>
+      <div class="d-sb-plan-row">
+        <span class="d-sb-plan-week" id="sb-week">Pre-Training</span>
+        <span class="d-sb-plan-pct" id="sb-pct-label">0%</span>
+      </div>
+      <div class="d-sb-progress"><div class="d-sb-progress-fill" id="sb-progress-fill" style="width:0%"></div></div>
     </div>
     <nav class="d-sb-nav">
       <a href="#today-card" class="d-nav-item active" onclick="dSetNav(this)">Today</a>
@@ -1519,67 +1588,64 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
       </div>
     </div>
 
-    <!-- Today's Workout -->
+    <!-- Today's Workout (flip card) -->
     <div id="today-card" class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div class="card-label">Today's Workout</div>
-        <div id="today-status-badge"></div>
+      <div class="today-flip-inner" id="today-flip-inner">
+        <!-- FRONT -->
+        <div class="card-flip-front">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-label">Today's Workout</div>
+            <div id="today-status-badge"></div>
+          </div>
+          <div id="today-workout-content">
+            <div class="today-workout-type" id="today-type">Loading…</div>
+            <div class="today-workout-detail" id="today-detail">Fetching your training plan…</div>
+            <div class="today-workout-meta" id="today-meta"></div>
+          </div>
+          <div class="workout-action-btns">
+            <button class="btn-did-it" id="btn-did-it" onclick="logWorkout('done')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              I DID IT
+            </button>
+            <button class="btn-skipped-it" id="btn-skipped-it" onclick="confirmSkip()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              I SKIPPED IT
+            </button>
+          </div>
+        </div>
+        <!-- BACK (done state) -->
+        <div class="card-flip-back">
+          <div class="done-back-wrap">
+            <div class="done-back-check">✓</div>
+            <div class="done-back-label">Workout Done</div>
+            <div class="done-back-type" id="done-back-type">Easy Run</div>
+            <button class="done-back-reset" onclick="flipCardBack()">← Change</button>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <div id="today-workout-content">
-        <div class="today-workout-type" id="today-type">Loading…</div>
-        <div class="today-workout-detail" id="today-detail">Fetching your training plan…</div>
-        <div class="today-workout-meta" id="today-meta"></div>
-      </div>
-
-      <div class="workout-action-btns">
-        <button class="btn-did-it" id="btn-did-it" onclick="logWorkout('done')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          I DID IT
-        </button>
-        <button class="btn-skipped-it" id="btn-skipped-it" onclick="logWorkout('skip')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          I SKIPPED IT
-        </button>
+    <!-- Skip Confirm Modal -->
+    <div class="skip-modal-overlay" id="skip-modal">
+      <div class="skip-modal-box">
+        <div class="skip-modal-title">Skip today's workout?</div>
+        <div class="skip-modal-sub">Rest days are part of training — but make sure<br>this is intentional, not just a bad morning.</div>
+        <div class="skip-modal-btns">
+          <button class="skip-cancel-btn" onclick="closeSkipModal()">Keep Going</button>
+          <button class="skip-confirm-btn" onclick="confirmSkipFinal()">Yes, Skip It</button>
+        </div>
       </div>
     </div>
 
   </div><!-- /hero-row -->
 
-  <!-- ── WEATHER: HARRISONBURG CONDITIONS ── -->
-  <div class="morning-row">
-    <div id="weather-card" class="card">
-      <div class="card-label">Harrisonburg, VA · Current Conditions</div>
-
-      <div id="weather-loading">Fetching conditions…</div>
-
-      <div id="weather-content" style="display:none;">
-        <div class="wx-top">
-          <span id="wx-emoji" class="wx-emoji">🌤️</span>
-          <span id="wx-temp" class="wx-temp">--</span>
-          <span class="wx-unit">°F</span>
-        </div>
-        <div id="wx-condition" class="wx-condition">Loading…</div>
-
-        <div class="wx-stats">
-          <div class="wx-stat">
-            <span class="wx-stat-lbl">Humidity</span>
-            <span class="wx-stat-val" id="wx-humidity">--%</span>
-          </div>
-          <div class="wx-stat">
-            <span class="wx-stat-lbl">Wind</span>
-            <span class="wx-stat-val" id="wx-wind">-- mph</span>
-          </div>
-          <div class="wx-stat">
-            <span class="wx-stat-lbl">UV Index</span>
-            <span class="wx-stat-val" id="wx-uv">--</span>
-          </div>
-        </div>
-
-        <div id="wx-badge" class="wx-badge">--</div>
-        <div id="wx-tip" class="wx-tip">--</div>
-      </div>
-    </div>
+  <!-- Weather data elements (hidden — weather shown in sidebar) -->
+  <div style="display:none">
+    <span id="wx-emoji"></span><span id="wx-temp"></span>
+    <span id="wx-condition"></span><span id="wx-humidity"></span>
+    <span id="wx-wind"></span><span id="wx-uv"></span>
+    <div id="wx-badge"></div><div id="wx-tip"></div>
+    <div id="weather-loading"></div><div id="weather-content"></div>
   </div>
 
   <!-- ── 7-DAY STRIP ── -->
@@ -1593,6 +1659,51 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
       <!-- Populated by JS -->
     </div>
   </div>
+
+  <!-- ── LOG A RUN ── -->
+    <!-- Manual Run Log -->
+    <div class="card" id="manual-log-card">
+      <div class="card-label" style="margin-bottom:0.875rem">Log a Run Manually</div>
+      <form id="manual-log-form" onsubmit="submitManualLog(event)">
+        <div class="form-group">
+          <label class="form-label" for="log-date">Date</label>
+          <input type="date" id="log-date" class="form-input" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="log-distance">Distance (mi)</label>
+            <input type="number" id="log-distance" class="form-input" step="0.01" min="0" placeholder="6.2" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="log-duration">Duration</label>
+            <input type="text" id="log-duration" class="form-input" placeholder="54:30" pattern="[0-9]+:[0-5][0-9]">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="log-type">Type</label>
+            <select id="log-type" class="form-select">
+              <option value="easy_run">Easy Run</option>
+              <option value="tempo">Tempo Run</option>
+              <option value="long_run">Long Run</option>
+              <option value="intervals">Intervals</option>
+              <option value="race">Race</option>
+              <option value="cross_training">Cross Training</option>
+              <option value="rest">Rest / Recovery</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="log-hr">Avg HR (bpm)</label>
+            <input type="number" id="log-hr" class="form-input" min="60" max="220" placeholder="148">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="log-notes">Notes</label>
+          <textarea id="log-notes" class="form-textarea" placeholder="How did it feel?"></textarea>
+        </div>
+        <button type="submit" class="form-submit">LOG THIS RUN</button>
+      </form>
+    </div>
 
   <!-- ── TRENDS ── -->
   <div>
@@ -1744,49 +1855,6 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
       </button>
     </div>
 
-    <!-- Manual Run Log -->
-    <div class="card" id="manual-log-card">
-      <div class="card-label" style="margin-bottom:0.875rem">Log a Run Manually</div>
-      <form id="manual-log-form" onsubmit="submitManualLog(event)">
-        <div class="form-group">
-          <label class="form-label" for="log-date">Date</label>
-          <input type="date" id="log-date" class="form-input" required>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="log-distance">Distance (mi)</label>
-            <input type="number" id="log-distance" class="form-input" step="0.01" min="0" placeholder="6.2" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="log-duration">Duration</label>
-            <input type="text" id="log-duration" class="form-input" placeholder="54:30" pattern="[0-9]+:[0-5][0-9]">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="log-type">Type</label>
-            <select id="log-type" class="form-select">
-              <option value="easy">Easy Run</option>
-              <option value="tempo">Tempo</option>
-              <option value="long">Long Run</option>
-              <option value="interval">Intervals</option>
-              <option value="race">Race</option>
-              <option value="recovery">Recovery</option>
-              <option value="cross">Cross-Train</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="log-hr">Avg HR (bpm)</label>
-            <input type="number" id="log-hr" class="form-input" min="60" max="220" placeholder="148">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="log-notes">Notes</label>
-          <textarea id="log-notes" class="form-textarea" placeholder="How did it feel?"></textarea>
-        </div>
-        <button type="submit" class="form-submit">LOG THIS RUN</button>
-      </form>
-    </div>
 
   </div><!-- /bottom-grid -->
 
@@ -1844,12 +1912,12 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
     </div>
 
     <div class="m-weather">
-      <div class="m-weather-icon">☀</div>
-      <div class="m-weather-info">
-        <div class="m-weather-temp">72°F · Partly Cloudy</div>
-        <div class="m-weather-sub">Wind 8 mph · Humidity 45%</div>
+      <div class="m-weather-icon" id="m-wx-icon">—</div>
+      <div class="m-weather-info" id="m-wx-info">
+        <div class="m-weather-temp" id="m-wx-temp">—°F · —</div>
+        <div class="m-weather-sub" id="m-wx-sub">— mph wind · —% humidity</div>
       </div>
-      <div class="m-weather-badge">GOOD</div>
+      <div class="m-weather-badge" id="m-wx-badge">—</div>
     </div>
 
     <div class="m-week-section">
@@ -2195,19 +2263,25 @@ async function fetchWeather() {
     const { label: rating, cls }  = runRating(temp, humidity, wind, wCode);
     const tip = runTip(rating, temp, humidity, wind, wCode);
 
-    document.getElementById('wx-emoji').textContent     = emoji;
-    document.getElementById('wx-temp').textContent      = temp;
-    document.getElementById('wx-condition').textContent = label;
-    document.getElementById('wx-humidity').textContent  = humidity + '%';
-    document.getElementById('wx-wind').textContent      = wind + ' mph';
-    document.getElementById('wx-uv').textContent        = uv;
-    const badge = document.getElementById('wx-badge');
-    badge.textContent = rating;
-    badge.className   = 'wx-badge ' + cls;
-    document.getElementById('wx-tip').textContent = tip;
+    // Hidden elements for JS compatibility
+    const wxEmoji = document.getElementById('wx-emoji'); if(wxEmoji) wxEmoji.textContent = emoji;
+    const wxTemp  = document.getElementById('wx-temp');  if(wxTemp)  wxTemp.textContent  = temp;
+    const wxCond  = document.getElementById('wx-condition'); if(wxCond) wxCond.textContent = label;
+    const wxHum   = document.getElementById('wx-humidity');  if(wxHum)  wxHum.textContent  = humidity + '%';
+    const wxWind  = document.getElementById('wx-wind');  if(wxWind)  wxWind.textContent   = wind + ' mph';
+    const wxUv    = document.getElementById('wx-uv');    if(wxUv)    wxUv.textContent     = uv;
+    const wxBadge = document.getElementById('wx-badge');
+    if (wxBadge) { wxBadge.textContent = rating; wxBadge.className = 'wx-badge ' + cls; }
+    const wxTip   = document.getElementById('wx-tip');   if(wxTip)   wxTip.textContent   = tip;
 
-    document.getElementById('weather-loading').style.display = 'none';
-    document.getElementById('weather-content').style.display = 'block';
+    // ── Sidebar weather ──
+    const sbIcon  = document.getElementById('sb-wx-icon');  if(sbIcon)  sbIcon.textContent  = emoji;
+    const sbTemp  = document.getElementById('sb-wx-temp');  if(sbTemp)  sbTemp.textContent  = temp;
+    const sbCond  = document.getElementById('sb-wx-cond');  if(sbCond)  sbCond.textContent  = label;
+    const sbHum   = document.getElementById('sb-wx-hum');   if(sbHum)   sbHum.textContent   = humidity + '%';
+    const sbWind  = document.getElementById('sb-wx-wind');  if(sbWind)  sbWind.textContent  = wind + ' mph';
+    const sbBadge = document.getElementById('sb-wx-badge');
+    if (sbBadge) { sbBadge.textContent = rating; sbBadge.className = 'd-sb-wx-badge ' + cls; }
   } catch(e) {
     const el = document.getElementById('weather-loading');
     if (el) el.textContent = 'Weather unavailable';
@@ -2230,6 +2304,8 @@ let state = {
   runsPage: 1,
   hasMoreRuns: false,
   weeklyData: null,
+  todayPlan: null,
+  weekPlan: [],
 };
 
 // Reset today status if date changed
@@ -2250,7 +2326,7 @@ function toast(msg, type = 'ok', dur = 3000) {
 
 // ── Strava OAuth ───────────────────────────────────────────────
 function stravaConnect() {
-  window.location.href = `${API}/strava/auth`;
+  window.location.href = `${API}/auth`;
 }
 
 function applyStravaConnected(data) {
@@ -2270,7 +2346,7 @@ async function checkStravaStatus() {
     try { applyStravaConnected(JSON.parse(cached)); } catch(e) {}
   }
   try {
-    const res = await fetch(`${API}/strava/athlete`, { credentials: 'include' });
+    const res = await fetch(`${API}/strava/athlete`);
     if (res.ok) {
       const data = await res.json();
       localStorage.setItem('strava_athlete', JSON.stringify(data)); // persist for next load
@@ -2313,52 +2389,144 @@ function updateCountdown() {
   document.getElementById('cd-secs').textContent  = String(s).padStart(2, '0');
 }
 
-// ── Today's Workout ────────────────────────────────────────────
-const WORKOUT_PLANS = {
-  Mon: { type: 'Easy Run',   detail: 'Conversational pace. Keep heart rate in Zone 2.', distance: '5 mi',  pace: '9:30/mi', duration: '47 min' },
-  Tue: { type: 'Tempo',      detail: '2 mi warm-up · 4 mi at lactate threshold · 2 mi cool-down.', distance: '8 mi', pace: '8:00/mi', duration: '1:04' },
-  Wed: { type: 'Easy Run',   detail: 'Recovery effort. Focus on form, not pace.', distance: '5 mi', pace: '10:00/mi', duration: '50 min' },
-  Thu: { type: 'Intervals',  detail: '8 × 800m repeats at 5K pace with 90 sec recovery jogs.', distance: '7 mi', pace: '7:30/mi', duration: '55 min' },
-  Fri: { type: 'Rest / XT',  detail: 'Full rest or 30–45 min of easy cross-training (cycling, yoga).', distance: '—', pace: '—', duration: '—' },
-  Sat: { type: 'Long Run',   detail: 'This week\'s long run. Easy effort — finish feeling strong, not spent.', distance: '14 mi', pace: '9:45/mi', duration: '2:17' },
-  Sun: { type: 'Recovery',   detail: 'Short easy shakeout. Stretch and roll out afterwards.', distance: '3 mi', pace: '10:30/mi', duration: '32 min' },
+// ── Workout type helpers ────────────────────────────────────────
+const WORKOUT_TYPE_DISPLAY = {
+  rest:           'Rest Day',
+  easy_run:       'Easy Run',
+  tempo:          'Tempo Run',
+  intervals:      'Intervals',
+  long_run:       'Long Run',
+  cross_training: 'Cross Training',
+  race:           'RACE DAY 🎽',
 };
+const WORKOUT_TYPE_PACE = {
+  easy_run:       '9:30–10:00/mi',
+  tempo:          '8:00–8:30/mi',
+  intervals:      '7:30/mi',
+  long_run:       '9:45–10:15/mi',
+  cross_training: '—',
+  rest:           '—',
+  race:           'Goal pace!',
+};
+function planTypeDisplay(t) { return WORKOUT_TYPE_DISPLAY[t] || t || 'Easy Run'; }
+function planPace(t)        { return WORKOUT_TYPE_PACE[t]    || '—'; }
+function planDuration(mi, t) {
+  if (!mi || mi === 0) return '—';
+  const paceMap = { easy_run: 570, tempo: 510, intervals: 480, long_run: 600, race: 570 };
+  const secsPerMi = paceMap[t] || 570;
+  const total = Math.round(mi * secsPerMi);
+  const h = Math.floor(total / 3600), m = Math.floor((total % 3600) / 60);
+  return h > 0 ? `${h}h ${m}m` : `${m} min`;
+}
+
+// ── Today's Workout ────────────────────────────────────────────
+function renderPreTraining() {
+  const typeEl   = document.getElementById('today-type');
+  const detailEl = document.getElementById('today-detail');
+  const metaEl   = document.getElementById('today-meta');
+  if (typeEl)   typeEl.textContent   = 'Pre-Training';
+  if (detailEl) detailEl.textContent = 'Your 18-week plan starts June 22. Build your base with easy runs and cross training until then.';
+  if (metaEl)   metaEl.innerHTML     = `
+    <div class="today-meta-item"><span class="today-meta-val">Jun 22</span><span class="today-meta-key">Plan Starts</span></div>
+    <div class="today-meta-item"><span class="today-meta-val">18 wks</span><span class="today-meta-key">Total Plan</span></div>
+    <div class="today-meta-item"><span class="today-meta-val">Oct 26</span><span class="today-meta-key">Race Day</span></div>
+  `;
+}
 
 async function loadTodayWorkout() {
-  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const dow  = days[new Date().getDay()];
-  const plan = WORKOUT_PLANS[dow];
-
-  // Try API first
   try {
-    const res = await fetch(`${API}/plan/today`, { credentials: 'include' });
+    const res = await fetch(`${API}/plan/today`);
     if (res.ok) {
       const data = await res.json();
+      state.todayPlan = data;
       renderTodayWorkout(data);
+      loadTodayCompletion();
+      return;
+    } else if (res.status === 404) {
+      renderPreTraining();
       return;
     }
   } catch(e) {}
+  renderPreTraining();
+}
 
-  renderTodayWorkout(plan);
+async function loadTodayCompletion() {
+  try {
+    const res = await fetch(`${API}/plan/completion`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.id) {
+        // Already completed today — reflect status
+        const status = data.workout_log_id ? 'done' : 'skip';
+        state.todayStatus = status;
+        applyWorkoutStatus(status, false);
+      }
+    }
+  } catch(e) {}
 }
 
 function renderTodayWorkout(plan) {
-  document.getElementById('today-type').textContent   = plan.type || 'Easy Run';
-  document.getElementById('today-detail').textContent = plan.detail || '';
+  const typeEl   = document.getElementById('today-type');
+  const detailEl = document.getElementById('today-detail');
+  const metaEl   = document.getElementById('today-meta');
 
-  const metaEl = document.getElementById('today-meta');
-  if (plan.distance || plan.pace || plan.duration) {
+  const displayType = planTypeDisplay(plan.workout_type || plan.type);
+  const pace        = planPace(plan.workout_type || plan.type);
+  const dist        = plan.distance_miles  != null ? `${plan.distance_miles} mi` : (plan.distance  || '—');
+  const dur         = plan.duration_minutes != null
+    ? (plan.duration_minutes >= 60
+        ? `${Math.floor(plan.duration_minutes/60)}h ${plan.duration_minutes%60}m`
+        : `${plan.duration_minutes} min`)
+    : planDuration(plan.distance_miles, plan.workout_type);
+  const detail = plan.notes || plan.detail || '';
+
+  if (typeEl)   typeEl.textContent   = displayType;
+  if (detailEl) detailEl.textContent = detail;
+
+  if (metaEl) {
     metaEl.innerHTML = `
-      <div class="today-meta-item"><span class="today-meta-val">${plan.distance || '—'}</span><span class="today-meta-key">Distance</span></div>
-      <div class="today-meta-item"><span class="today-meta-val">${plan.pace || '—'}</span><span class="today-meta-key">Target Pace</span></div>
-      <div class="today-meta-item"><span class="today-meta-val">${plan.duration || '—'}</span><span class="today-meta-key">Est. Time</span></div>
+      <div class="today-meta-item"><span class="today-meta-val">${dist}</span><span class="today-meta-key">Distance</span></div>
+      <div class="today-meta-item"><span class="today-meta-val">${pace}</span><span class="today-meta-key">Target Pace</span></div>
+      <div class="today-meta-item"><span class="today-meta-val">${dur}</span><span class="today-meta-key">Est. Time</span></div>
     `;
   }
 
-  // Restore saved status
-  if (state.todayStatus) {
+  // Restore saved status (if same date)
+  if (state.todayStatus && state.todayDate === todayStr) {
     applyWorkoutStatus(state.todayStatus, false);
   }
+}
+
+// ── Skip modal ────────────────────────────────────────────────
+function confirmSkip() {
+  document.getElementById('skip-modal').classList.add('open');
+}
+function closeSkipModal() {
+  document.getElementById('skip-modal').classList.remove('open');
+}
+function confirmSkipFinal() {
+  closeSkipModal();
+  logWorkout('skip');
+}
+
+// ── Flip card ─────────────────────────────────────────────────
+function flipCard() {
+  const inner = document.getElementById('today-flip-inner');
+  if (inner) inner.classList.add('flipped');
+}
+function flipCardBack() {
+  const inner = document.getElementById('today-flip-inner');
+  if (inner) inner.classList.remove('flipped');
+  // Reset to allow re-logging
+  state.todayStatus = null;
+  localStorage.removeItem('today_status');
+  localStorage.removeItem('today_date');
+  const badge = document.getElementById('today-status-badge');
+  if (badge) badge.innerHTML = '';
+  const did  = document.getElementById('btn-did-it');
+  const skip = document.getElementById('btn-skipped-it');
+  if (did)  did.classList.remove('active');
+  if (skip) skip.classList.remove('active');
 }
 
 function logWorkout(status) {
@@ -2368,15 +2536,32 @@ function logWorkout(status) {
 
   applyWorkoutStatus(status, true);
 
-  // Post to API (fire-and-forget)
+  if (status === 'done') {
+    // Update back face with workout type
+    const typeEl = document.getElementById('done-back-type');
+    if (typeEl) typeEl.textContent = planTypeDisplay(state.todayPlan?.workout_type) || 'Workout';
+    // Flip after brief delay for tactile feel
+    setTimeout(flipCard, 180);
+  }
+
+  // Build payload from today's plan if available
+  const plan = state.todayPlan || {};
+  const payload = {
+    status,
+    plan_id:          plan.id          ?? null,
+    workout_type:     plan.workout_type ?? 'easy_run',
+    distance_miles:   plan.distance_miles   ?? null,
+    duration_minutes: plan.duration_minutes ?? null,
+    notes:            null,
+  };
+
   fetch(`${API}/plan/log`, {
     method: 'POST',
-    credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status, date: new Date().toISOString().split('T')[0] }),
+    body: JSON.stringify(payload),
   }).catch(() => {});
 
-  toast(status === 'done' ? '✓ Workout logged!' : 'Skipped logged. Rest up.', status === 'done' ? 'ok' : 'ok');
+  toast(status === 'done' ? '✓ Workout logged!' : 'Skipped — rest up.', 'ok');
 }
 
 function applyWorkoutStatus(status, animate) {
@@ -2384,25 +2569,64 @@ function applyWorkoutStatus(status, animate) {
   const skip = document.getElementById('btn-skipped-it');
   const badge = document.getElementById('today-status-badge');
 
-  did.classList.toggle('active', status === 'done');
-  skip.classList.toggle('active', status === 'skip');
+  if (did)  did.classList.toggle('active', status === 'done');
+  if (skip) skip.classList.toggle('active', status === 'skip');
 
   if (status === 'done') {
-    badge.innerHTML = `<span class="workout-status-badge badge-done">✓ Done</span>`;
+    if (badge) badge.innerHTML = `<span class="workout-status-badge badge-done">✓ Done</span>`;
+    // Update back face
+    const typeEl = document.getElementById('done-back-type');
+    if (typeEl) typeEl.textContent = planTypeDisplay(state.todayPlan?.workout_type) || 'Workout';
+    // Flip card (with delay if animated, immediately if restoring)
+    if (animate) {
+      setTimeout(flipCard, 180);
+    } else {
+      flipCard();
+    }
   } else if (status === 'skip') {
-    badge.innerHTML = `<span class="workout-status-badge badge-skip">Skipped</span>`;
+    if (badge) badge.innerHTML = `<span class="workout-status-badge badge-skip">Skipped</span>`;
   }
 
-  if (animate && status === 'done') {
-    did.style.transform = 'scale(1.04)';
-    setTimeout(() => { did.style.transform = ''; }, 200);
+  if (animate && status === 'skip') {
+    if (skip) { skip.style.transform = 'scale(1.04)'; setTimeout(() => { skip.style.transform = ''; }, 200); }
   }
 }
 
 // ── 7-Day Week Strip ───────────────────────────────────────────
-function renderWeekStrip(activities) {
+// Load this week's plan from Supabase, then render
+async function loadPlanWeek() {
+  try {
+    const res = await fetch(`${API}/plan/week`);
+    if (res.ok) {
+      state.weekPlan = await res.json();
+      renderWeekStrip(state.activities, state.weekPlan);
+      // Sync mobile week tab too
+      if (typeof mRenderWeek === 'function') mRenderWeek();
+    }
+  } catch(e) {}
+  // Always render what we have (even if API failed)
+  renderWeekStrip(state.activities, state.weekPlan);
+}
+
+function renderWeekStrip(activities, weekPlan) {
+  weekPlan = weekPlan || state.weekPlan || [];
   const strip = document.getElementById('week-strip');
   const rangeEl = document.getElementById('week-range');
+
+  // Pre-training banner — show when plan hasn't started yet
+  const planStart = new Date('2026-06-22T00:00:00');
+  if (new Date() < planStart && weekPlan.length === 0) {
+    strip.innerHTML = `
+      <div class="pretrain-banner">
+        <div class="pretrain-banner-icon">🏗️</div>
+        <div class="pretrain-banner-text">
+          <h3>Plan starts June 22</h3>
+          <p>Use this time to build your base. Easy runs 3–4×/week,<br>cross-train, and stay consistent heading into training.</p>
+        </div>
+      </div>`;
+    if (rangeEl) rangeEl.textContent = 'Pre-Training Period';
+    return;
+  }
 
   const today = new Date();
   const dow   = today.getDay(); // 0=Sun
@@ -2429,7 +2653,10 @@ function renderWeekStrip(activities) {
   });
 
   strip.innerHTML = '';
-  const plans = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  // Build a date→plan map from Supabase data
+  const planByDate = {};
+  weekPlan.forEach(p => { planByDate[p.workout_date] = p; });
+  const plans = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']; // fallback labels
 
   weekDays.forEach((d, i) => {
     const dateStr = d.toISOString().split('T')[0];
@@ -2441,7 +2668,9 @@ function renderWeekStrip(activities) {
     let cls = 'day-cell';
     let dotStatus = 'pending';
     let milesStr  = '';
-    let typeStr   = WORKOUT_PLANS[plans[i]]?.type || '';
+    const dateKey  = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const planRow  = planByDate[dateKey];
+    let typeStr    = planRow ? planTypeDisplay(planRow.workout_type) : '';
 
     if (isToday) {
       cls += ' today';
@@ -2608,14 +2837,16 @@ function renderCharts(weeklyData) {
   const chartDefaults = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
     plugins: {
       legend: { display: false },
       tooltip: {
         backgroundColor: CHAR,
         titleColor: '#fff',
-        bodyColor: '#aaa',
-        padding: 10,
-        cornerRadius: 0,
+        bodyColor: '#BADA55',
+        padding: 12,
+        cornerRadius: 2,
+        displayColors: false,
       }
     },
     scales: {
@@ -2786,7 +3017,7 @@ async function loadGPSRoute() {
 
   try {
     const act = state.activities[0];
-    const res = await fetch(`${API}/strava/activities/${act.id}/streams?keys=latlng,altitude&key_by_type=true`, { credentials: 'include' });
+    const res = await fetch(`${API}/strava/activities/${act.id}/streams?keys=latlng,altitude&key_by_type=true`);
     if (!res.ok) return;
     const data = await res.json();
     const coords = (data.latlng?.data || []).map(([lat, lng]) => [lng, lat]);
@@ -2817,7 +3048,7 @@ async function loadGPSRoute() {
 async function loadSuggestedRoute() {
   if (!state.mapRoute) return;
   try {
-    const res = await fetch(`${API}/plan/suggested-route`, { credentials: 'include' });
+    const res = await fetch(`${API}/plan/suggested-route`);
     if (!res.ok) return;
     const data = await res.json();
 
@@ -2906,7 +3137,7 @@ function renderRunsList(activities, append = false) {
 
 async function fetchActivities(page = 1) {
   try {
-    const res = await fetch(`${API}/strava/activities?per_page=10&page=${page}`, { credentials: 'include' });
+    const res = await fetch(`${API}/strava/activities?per_page=10&page=${page}`);
     if (!res.ok) throw new Error('Not connected');
     const data = await res.json();
     return Array.isArray(data) ? data : [];
@@ -2934,20 +3165,25 @@ async function submitManualLog(e) {
   btn.textContent = 'LOGGING…';
   btn.disabled = true;
 
+  const rawType = document.getElementById('log-type').value;
+  const durationRaw = document.getElementById('log-duration').value || '0:00';
+  const durationParts = durationRaw.split(':');
+  const durationMins = (parseInt(durationParts[0]) || 0) * 60 + (parseInt(durationParts[1]) || 0);
+
   const payload = {
-    date:     document.getElementById('log-date').value,
-    distance: parseFloat(document.getElementById('log-distance').value),
-    duration: document.getElementById('log-duration').value,
-    type:     document.getElementById('log-type').value,
-    heart_rate: parseInt(document.getElementById('log-hr').value) || null,
-    notes:    document.getElementById('log-notes').value,
+    status:           'done',
+    plan_id:          null,
+    workout_type:     rawType,
+    distance_miles:   parseFloat(document.getElementById('log-distance').value) || null,
+    duration_minutes: durationMins || null,
+    avg_heart_rate:   parseInt(document.getElementById('log-hr').value) || null,
+    notes:            document.getElementById('log-notes').value || null,
   };
 
   try {
-    const res = await fetch(`${API}/runs/log`, {
+    const res = await fetch(`${API}/plan/log`, {
       method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
@@ -2970,7 +3206,7 @@ async function submitManualLog(e) {
       };
       state.activities.unshift(localRun);
       renderRunsList(state.activities.slice(0, 10));
-      renderWeekStrip(state.activities);
+      renderWeekStrip(state.activities, state.weekPlan);
       renderCalendar(state.activities);
       toast('Run saved locally (Strava sync unavailable)');
       e.target.reset();
@@ -3068,10 +3304,17 @@ async function init() {
   // Check Strava status
   await checkStravaStatus();
 
-  // Load workout data
+  // Load today's plan from Supabase
   await loadTodayWorkout();
 
-  // Load activities
+  // Load this week's plan from Supabase (week strip + mobile week tab)
+  await loadPlanWeek();
+
+  // Sync sidebar (progress bar, days, week number)
+  dSyncCountdown();
+  setInterval(dSyncCountdown, 60000); // refresh every minute
+
+  // Load Strava activities
   await loadActivities();
 }
 
@@ -3110,13 +3353,43 @@ function dSyncStrava() {
   if (tbBtn && connected) { tbBtn.innerHTML = '✓ ' + label; tbBtn.style.background = '#2e7d32'; tbBtn.style.borderColor = '#2e7d32'; tbBtn.onclick = null; }
 }
 
-// Sync countdown days to sidebar
+// Sync sidebar: days remaining, progress bar, week number
 function dSyncCountdown() {
-  const cdDays = document.getElementById('cd-days');
-  const sbDays = document.getElementById('sb-days');
-  if (cdDays && sbDays && cdDays.textContent !== '--') {
-    sbDays.textContent = cdDays.textContent;
+  const now      = new Date();
+  const raceMs   = RACE_DATE - now;
+  const daysLeft = Math.max(0, Math.floor(raceMs / 86400000));
+
+  // sb-days removed (countdown moved off sidebar); no mirror needed
+
+  // Compute progress within 18-week plan (Jun 22 → Oct 26)
+  const PLAN_START      = new Date('2026-06-22T00:00:00-04:00');
+  const PLAN_TOTAL_DAYS = Math.ceil((RACE_DATE - PLAN_START) / 86400000); // 126
+
+  let weekNum = null;
+  let pct     = 0;
+
+  if (now >= PLAN_START && now <= RACE_DATE) {
+    const elapsed = Math.floor((now - PLAN_START) / 86400000);
+    weekNum = Math.min(18, Math.ceil(elapsed / 7) || 1);
+    pct     = Math.min(100, Math.round((elapsed / PLAN_TOTAL_DAYS) * 100));
+  } else if (now > RACE_DATE) {
+    weekNum = 18; pct = 100;
   }
+
+  // Supabase plan data takes priority for week number
+  if (state.todayPlan && state.todayPlan.week_number) {
+    weekNum = state.todayPlan.week_number;
+  }
+
+  // Progress bar + percentage label
+  const fill   = document.getElementById('sb-progress-fill');
+  const pctLbl = document.getElementById('sb-pct-label');
+  if (fill)   fill.style.width   = pct + '%';
+  if (pctLbl) pctLbl.textContent = pct + '%';
+
+  // Week label
+  const sbWeek = document.getElementById('sb-week');
+  if (sbWeek) sbWeek.textContent = weekNum ? `Wk ${weekNum} of 18` : 'Pre-Training';
 }
 
 // Highlight active nav on scroll
@@ -3144,6 +3417,12 @@ function dSyncActiveNav() {
 
 // Run on load + interval
 document.addEventListener('DOMContentLoaded', () => {
+  // Handle redirect back from Strava OAuth
+  if (new URLSearchParams(window.location.search).get('connected') === '1') {
+    history.replaceState({}, '', '/');
+    toast('✓ Strava connected!', 'ok');
+    checkStravaStatus();
+  }
   dSyncCountdown();
   const pc = document.querySelector('.page-container');
   if (pc) pc.addEventListener('scroll', dSyncActiveNav);
@@ -3173,7 +3452,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = document.getElementById('m-today-date');
     if (el) el.textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
 
-    // Athlete name
+    // Today's plan data (from Supabase)
+    if (state.todayPlan) {
+      const plan = state.todayPlan;
+      const typeEl = document.querySelector('#m-today .m-mission-title');
+      if (typeEl) {
+        const distMi = parseFloat(plan.distance_miles) || 0;
+        const typeDisp = (typeof planTypeDisplay === 'function') ? planTypeDisplay(plan.workout_type) : plan.workout_type;
+        const distDisp = distMi > 0 ? distMi + ' miles' : 'Rest';
+        typeEl.innerHTML = typeDisp + (distMi > 0 ? '<br><em>' + distDisp + '</em>' : '');
+      }
+      // Update mission stats
+      const mMi   = document.querySelector('.m-mission-stat-v');
+      const stats = document.querySelectorAll('#m-today .m-mission-stat');
+      if (stats.length >= 4 && plan.distance_miles) {
+        const distMi = parseFloat(plan.distance_miles) || 0;
+        const paceDisp = (typeof planPace === 'function') ? planPace(plan.workout_type) : '9:30';
+        const durDisp  = (typeof planDuration === 'function') ? planDuration(distMi, plan.workout_type) : '—';
+        stats[0].querySelector('.m-mission-stat-v').textContent = distMi > 0 ? distMi : '—';
+        stats[1].querySelector('.m-mission-stat-v').textContent = paceDisp.split('–')[0] || '—';
+        stats[2].querySelector('.m-mission-stat-v').textContent = durDisp;
+      }
+    }
+
+  // Athlete name
     if (state.athlete && state.athlete.firstname) {
       const nameEl = document.getElementById('m-athlete-name');
       if (nameEl) nameEl.textContent = state.athlete.firstname;
@@ -3184,12 +3486,30 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Countdown
+    // Countdown (mobile)
     const cdEl = document.getElementById('m-cd-num');
     if (cdEl) {
       const diffMs = RACE_DATE - new Date();
-      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-      cdEl.textContent = diffDays > 0 ? diffDays : '0';
+      const diffDays = Math.max(0, Math.floor(diffMs / 86400000));
+      cdEl.textContent = diffDays;
+    }
+
+    // Sync mobile weather from already-fetched data
+    const sbTemp = document.getElementById('sb-wx-temp');
+    const sbIcon = document.getElementById('sb-wx-icon');
+    const sbCond = document.getElementById('sb-wx-cond');
+    const sbHum  = document.getElementById('sb-wx-hum');
+    const sbWind = document.getElementById('sb-wx-wind');
+    const sbWxBadge = document.getElementById('sb-wx-badge');
+    const mTemp  = document.getElementById('m-wx-temp');
+    const mSub   = document.getElementById('m-wx-sub');
+    const mIcon  = document.getElementById('m-wx-icon');
+    const mBadge = document.getElementById('m-wx-badge');
+    if (sbTemp && sbTemp.textContent !== '—') {
+      if (mIcon)  mIcon.textContent  = sbIcon?.textContent || '';
+      if (mTemp)  mTemp.textContent  = (sbTemp?.textContent || '—') + '°F · ' + (sbCond?.textContent || '');
+      if (mSub)   mSub.textContent   = (sbWind?.textContent || '—') + ' wind · ' + (sbHum?.textContent || '—') + ' humidity';
+      if (mBadge && sbWxBadge) { mBadge.textContent = sbWxBadge.textContent; mBadge.className = 'm-weather-badge ' + (sbWxBadge.className.split(' ')[1] || ''); }
     }
 
     // Today status (done/skip)
@@ -3268,16 +3588,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 7-day grid
     const grid = document.getElementById('m-7day-grid');
     if (grid) {
-      const PLAN = [
-        ['M','Easy','5'],['T','Tempo','6'],['W','Easy','5'],
-        ['T','Intv','7'],['F','Rest','—'],['S','Long','16'],['S','Rec','2']
-      ];
+      // Build plan lookup from Supabase weekPlan
+      const planByDate2 = {};
+      (state.weekPlan || []).forEach(p => { planByDate2[p.workout_date] = p; });
+      const DAY_LABELS = ['M','T','W','T','F','S','S'];
+      const TYPE_SHORT = { rest:'Rest', easy_run:'Easy', tempo:'Tempo', intervals:'Intv', long_run:'Long', cross_training:'XT', race:'RACE' };
       let html = '';
       for (let i = 0; i < 7; i++) {
         const d = new Date(weekStart); d.setDate(weekStart.getDate() + i);
         const isToday = d.toDateString() === now.toDateString();
         const isPast = d < now && !isToday;
-        const [dl, type, mi] = PLAN[i];
+        const dateKey = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        const planRow = planByDate2[dateKey];
+        const dl   = DAY_LABELS[i];
+        const type = planRow ? (TYPE_SHORT[planRow.workout_type] || planRow.workout_type) : '—';
+        const mi   = planRow && planRow.distance_miles > 0 ? parseFloat(planRow.distance_miles) : '—';
         html += '<div class="m-7day-cell' + (isToday ? ' today' : '') + (isPast ? ' done' : '') + '">' +
           '<div class="m-7day-d">' + dl + '</div>' +
           '<div class="m-7day-type">' + type + '</div>' +
@@ -3393,6 +3718,8 @@ document.addEventListener('DOMContentLoaded', () => {
     mRenderWeek();
   }
 
+  window.mSyncToday = mSyncToday;
+
   // Run after DOM + after data likely loaded
   document.addEventListener('DOMContentLoaded', function() {
     mInit();
@@ -3408,7 +3735,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const _origInterval = window.setInterval;
 })();
 
-setInterval(() => { dSyncStrava(); dSyncCountdown(); }, 800);
+setInterval(() => { dSyncStrava(); }, 1500);
 </script>
 </body>
 </html>
