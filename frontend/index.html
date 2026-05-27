@@ -1857,11 +1857,11 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
       </div>
     </div><!-- /maps -->
 
-    <!-- Recent Runs -->
+    <!-- Recent Activities -->
     <div class="card" id="runs-section" style="margin-top:18px">
-      <div class="card-label" style="margin-bottom:0.875rem">Recent Runs</div>
+      <div class="card-label" style="margin-bottom:0.875rem">Recent Activities</div>
       <div class="runs-list" id="runs-list">
-        <div class="runs-empty">Loading runs from Strava…</div>
+        <div class="runs-empty">Loading activities from Strava…</div>
       </div>
       <button class="btn btn-ghost runs-load-more" id="load-more-btn" onclick="loadMoreRuns()" style="display:none">
         Load More
@@ -2247,7 +2247,7 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
   <!-- ── TAB 5: MORE (Recent Runs) ──────────────────────────────── -->
   <div id="m-more" class="m-tab">
     <div class="m-runs-header">
-      <div class="m-runs-title">Recent Runs</div>
+      <div class="m-runs-title">Recent Activities</div>
       <div class="m-filter-pills">
         <button class="m-filter-pill active" onclick="mFilterRuns(this,'all')">All</button>
         <button class="m-filter-pill" onclick="mFilterRuns(this,'easy')">Easy</button>
@@ -2548,10 +2548,10 @@ function renderPreTraining() {
   const detailEl = document.getElementById('today-detail');
   const metaEl   = document.getElementById('today-meta');
   if (typeEl)   typeEl.textContent   = 'Pre-Training';
-  if (detailEl) detailEl.textContent = 'Your 18-week plan starts June 22. Build your base with easy runs and cross training until then.';
+  if (detailEl) detailEl.textContent = 'Your plan starts June 1. Build your base with easy runs and cross training.';
   if (metaEl)   metaEl.innerHTML     = `
-    <div class="today-meta-item"><span class="today-meta-val">Jun 22</span><span class="today-meta-key">Plan Starts</span></div>
-    <div class="today-meta-item"><span class="today-meta-val">18 wks</span><span class="today-meta-key">Total Plan</span></div>
+    <div class="today-meta-item"><span class="today-meta-val">Jun 1</span><span class="today-meta-key">Plan Starts</span></div>
+    <div class="today-meta-item"><span class="today-meta-val">21 wks</span><span class="today-meta-key">Total Plan</span></div>
     <div class="today-meta-item"><span class="today-meta-val">Oct 26</span><span class="today-meta-key">Race Day</span></div>
   `;
 }
@@ -2737,13 +2737,13 @@ function renderWeekStrip(activities, weekPlan) {
   const rangeEl = document.getElementById('week-range');
 
   // Pre-training banner — show when plan hasn't started yet
-  const planStart = new Date('2026-06-22T00:00:00');
+  const planStart = new Date('2026-06-01T00:00:00');
   if (new Date() < planStart && weekPlan.length === 0) {
     strip.innerHTML = `
       <div class="pretrain-banner">
         <div class="pretrain-banner-icon">🏗️</div>
         <div class="pretrain-banner-text">
-          <h3>Plan starts June 22</h3>
+          <h3>Plan starts June 1</h3>
           <p>Use this time to build your base. Easy runs 3–4×/week,<br>cross-train, and stay consistent heading into training.</p>
         </div>
       </div>`;
@@ -3202,10 +3202,79 @@ function fetchSuggestedRoute() {
   loadSuggestedRoute();
 }
 
-// ── Recent Runs ────────────────────────────────────────────────
-const RUN_ICONS = {
-  default: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2e2e2e" stroke-width="1.5"><path d="M13 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0M5.45 5.11L2 6v-2l5.32-1.45A2 2 0 0 1 9 3.96l.29.26c.28.25.6.46.94.61L15.5 7l3.5 3.5-1 1L14.5 8l-3.74-.37L9 10.77V13H7v-3.09c0-.77.37-1.49 1-1.95l2.96-2.05c-.43-.2-.83-.46-1.17-.78L9.45 5.8a2 2 0 0 0-4 .7z"/><path d="M9 21l2-5 3 2 3-8"/></svg>`,
+// ── Recent Activities ──────────────────────────────────────────
+const ACTIVITY_ICONS = {
+  Run:            `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0M5.45 5.11L2 6v-2l5.32-1.45A2 2 0 0 1 9 3.96l.29.26c.28.25.6.46.94.61L15.5 7l3.5 3.5-1 1L14.5 8l-3.74-.37L9 10.77V13H7v-3.09c0-.77.37-1.49 1-1.95l2.96-2.05c-.43-.2-.83-.46-1.17-.78L9.45 5.8a2 2 0 0 0-4 .7z"/><path d="M9 21l2-5 3 2 3-8"/></svg>`,
+  TrailRun:       `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0M5.45 5.11L2 6v-2l5.32-1.45A2 2 0 0 1 9 3.96l.29.26c.28.25.6.46.94.61L15.5 7l3.5 3.5-1 1L14.5 8l-3.74-.37L9 10.77V13H7v-3.09c0-.77.37-1.49 1-1.95l2.96-2.05c-.43-.2-.83-.46-1.17-.78L9.45 5.8a2 2 0 0 0-4 .7z"/><path d="M9 21l2-5 3 2 3-8"/></svg>`,
+  Ride:           '🚴',
+  VirtualRide:    '🚴',
+  EBikeRide:      '🚴',
+  GravelRide:     '🚴',
+  Swim:           '🏊',
+  Walk:           '🚶',
+  Hike:           '🥾',
+  WeightTraining: '🏋️',
+  Workout:        '💪',
+  Yoga:           '🧘',
+  Pilates:        '🧘',
+  Crossfit:       '🏋️',
+  Elliptical:     '🏃',
+  Rowing:         '🚣',
+  StairStepper:   '🪜',
+  Soccer:         '⚽',
+  Tennis:         '🎾',
+  Basketball:     '🏀',
+  Golf:           '⛳',
+  Ski:            '⛷️',
+  Snowboard:      '🏂',
+  Kayaking:       '🚣',
+  AlpineSki:      '⛷️',
+  NordicSki:      '⛷️',
+  IceSkate:       '⛸️',
+  default:        '🏃',
 };
+function activityIcon(type) {
+  const icon = ACTIVITY_ICONS[type];
+  if (!icon) return ACTIVITY_ICONS.default;
+  // SVG string vs emoji
+  return icon.startsWith('<') ? icon : `<span style="font-size:18px;line-height:1">${icon}</span>`;
+}
+function activityLabel(type) {
+  const labels = {
+    Run:'Run', TrailRun:'Trail Run', Ride:'Ride', VirtualRide:'Virtual Ride',
+    EBikeRide:'E-Bike', GravelRide:'Gravel Ride', Swim:'Swim',
+    Walk:'Walk', Hike:'Hike', WeightTraining:'Weights', Workout:'Workout',
+    Yoga:'Yoga', Pilates:'Pilates', Crossfit:'CrossFit', Elliptical:'Elliptical',
+    Rowing:'Rowing', StairStepper:'Stairs', Soccer:'Soccer', Tennis:'Tennis',
+  };
+  return labels[type] || type || 'Activity';
+}
+// Stats display by activity type — runs show pace, rides show speed, others show duration
+function activityStats(act) {
+  const type = act.type || '';
+  const mi = (act.distance || 0) / 1609.34;
+  const moveSecs = act.moving_time || 0;
+
+  if (['Run','TrailRun'].includes(type)) {
+    const miles = metersToMiles(act.distance || 0);
+    const pace  = mi >= 0.1 ? secsToMinMile(Math.round(moveSecs / mi)) : '--:--';
+    return { primary: `${miles} mi`, secondary: `${pace}/mi` };
+  }
+  if (['Ride','VirtualRide','EBikeRide','GravelRide'].includes(type)) {
+    const miles = metersToMiles(act.distance || 0);
+    const speedMph = moveSecs > 0 ? ((mi / moveSecs) * 3600).toFixed(1) : '--';
+    return { primary: `${miles} mi`, secondary: `${speedMph} mph` };
+  }
+  if (type === 'Swim') {
+    const yards = ((act.distance || 0) * 1.094).toFixed(0);
+    return { primary: `${yards} yd`, secondary: moveSecs > 60 ? `${Math.round(moveSecs/60)} min` : '' };
+  }
+  // Default: show duration
+  const mins = Math.round(moveSecs / 60);
+  return { primary: mins ? `${mins} min` : '—', secondary: '' };
+}
+// RUN_ICONS kept for any legacy reference
+const RUN_ICONS = { default: ACTIVITY_ICONS.Run };
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -3232,28 +3301,28 @@ function renderRunsList(activities, append = false) {
   if (!append) list.innerHTML = '';
 
   if (!activities.length && !append) {
-    list.innerHTML = '<div class="runs-empty">No runs found. Connect Strava or log a run manually.</div>';
+    list.innerHTML = '<div class="runs-empty">No activities found. Connect Strava to sync your workouts.</div>';
     return;
   }
 
   activities.forEach(act => {
-    const miles    = metersToMiles(act.distance || 0);
-    const moveSecs = act.moving_time || 0;
-    const mi       = (act.distance || 1) / 1609.34;
-    const pace     = mi > 0 ? secsToMinMile(Math.round(moveSecs / mi)) : '--:--';
-    const date     = formatDate(act.start_date_local || act.date);
+    const type  = act.type || 'Run';
+    const date  = formatDate(act.start_date_local || act.date);
+    const stats = activityStats(act);
+    const icon  = activityIcon(type);
+    const label = activityLabel(type);
 
     const item = document.createElement('div');
     item.className = 'run-item';
     item.innerHTML = `
-      <div class="run-type-icon">${RUN_ICONS.default}</div>
+      <div class="run-type-icon">${icon}</div>
       <div class="run-info">
-        <div class="run-title">${act.name || 'Run'}</div>
-        <div class="run-meta">${date}${act.average_heartrate ? ' · ' + Math.round(act.average_heartrate) + ' bpm avg' : ''}</div>
+        <div class="run-title">${act.name || label}</div>
+        <div class="run-meta">${date}${act.average_heartrate ? ' · ' + Math.round(act.average_heartrate) + ' bpm' : ''}</div>
       </div>
       <div class="run-stats">
-        <div class="run-distance">${miles} mi</div>
-        <div class="run-pace">${pace}/mi</div>
+        <div class="run-distance">${stats.primary}</div>
+        ${stats.secondary ? `<div class="run-pace">${stats.secondary}</div>` : ''}
       </div>
     `;
     list.appendChild(item);
@@ -3422,10 +3491,11 @@ async function init() {
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  // Restore mapbox token
+  // Restore mapbox token value — maps init lazily when Strava tab opens
   const savedToken = localStorage.getItem('mapbox_token');
   if (savedToken) {
-    document.getElementById('mapbox-token-input').value = savedToken;
+    const tokenInput = document.getElementById('mapbox-token-input');
+    if (tokenInput) tokenInput.value = savedToken;
   }
 
   // Check Strava status
@@ -3475,9 +3545,18 @@ function dSwitchTab(name) {
       const c = document.getElementById(id);
       if (c && c._chart) c._chart.resize();
     });
-    // Resize Mapbox if initialized
-    if (state.mapGPS)   setTimeout(() => state.mapGPS.resize(),   50);
-    if (state.mapRoute) setTimeout(() => state.mapRoute.resize(), 50);
+    // Init or resize Mapbox — maps must be initialized AFTER the panel is visible
+    setTimeout(() => {
+      const savedToken = localStorage.getItem('mapbox_token');
+      if (savedToken && !state.mapsInitialized && typeof initMaps === 'function') {
+        const tokenInput = document.getElementById('mapbox-token-input');
+        if (tokenInput) tokenInput.value = savedToken;
+        initMaps();
+      } else {
+        if (state.mapGPS)   state.mapGPS.resize();
+        if (state.mapRoute) state.mapRoute.resize();
+      }
+    }, 150);
     // Update athlete card
     dRenderAthleteCard();
   }
@@ -3531,19 +3610,19 @@ function dSyncCountdown() {
 
   // sb-days removed (countdown moved off sidebar); no mirror needed
 
-  // Compute progress within 18-week plan (Jun 22 → Oct 26)
-  const PLAN_START      = new Date('2026-06-22T00:00:00-04:00');
-  const PLAN_TOTAL_DAYS = Math.ceil((RACE_DATE - PLAN_START) / 86400000); // 126
+  // Compute progress within full plan (Jun 1 → Oct 26 = ~21 weeks)
+  const PLAN_START      = new Date('2026-06-01T00:00:00-04:00');
+  const PLAN_TOTAL_DAYS = Math.ceil((RACE_DATE - PLAN_START) / 86400000); // ~147
 
   let weekNum = null;
   let pct     = 0;
 
   if (now >= PLAN_START && now <= RACE_DATE) {
     const elapsed = Math.floor((now - PLAN_START) / 86400000);
-    weekNum = Math.min(18, Math.ceil(elapsed / 7) || 1);
+    weekNum = Math.min(21, Math.ceil(elapsed / 7) || 1);
     pct     = Math.min(100, Math.round((elapsed / PLAN_TOTAL_DAYS) * 100));
   } else if (now > RACE_DATE) {
-    weekNum = 18; pct = 100;
+    weekNum = 21; pct = 100;
   }
 
   // Supabase plan data takes priority for week number
@@ -3559,7 +3638,7 @@ function dSyncCountdown() {
 
   // Week label
   const sbWeek = document.getElementById('sb-week');
-  if (sbWeek) sbWeek.textContent = weekNum ? `Wk ${weekNum} of 18` : 'Pre-Training';
+  if (sbWeek) sbWeek.textContent = weekNum ? `Wk ${weekNum} of 21` : 'Pre-Training';
 }
 
 // Run on load + interval
