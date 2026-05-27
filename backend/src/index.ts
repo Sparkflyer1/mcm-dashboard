@@ -495,6 +495,50 @@ async function handleNutritionLog(request: Request, env: Env): Promise<Response>
   }
 }
 
+
+/** GET /cross-training — recent cross-training log + available options */
+async function handleCrossTraining(request: Request, env: Env): Promise<Response> {
+  const cors = corsHeaders(env, request.headers.get("Origin"));
+  const [logResp, optResp] = await Promise.all([
+    supabase(env, `cross_training_log?user_id=eq.${ANON_USER_ID}&order=date.desc&limit=20&select=*`),
+    supabase(env, `cross_training_options?order=activity.asc&select=*`)
+  ]);
+  const log     = logResp.ok  ? await logResp.json()  : [];
+  const options = optResp.ok  ? await optResp.json()  : [];
+  return jsonResponse({ log, options }, 200, cors);
+}
+
+/** POST /cross-training/log — insert a cross-training entry */
+async function handleCrossTrainingLog(request: Request, env: Env): Promise<Response> {
+  const cors = corsHeaders(env, request.headers.get("Origin"));
+  let body: {
+    activity_type: string; duration_minutes: number; intensity?: string;
+    calories_burned?: number; heart_rate_avg?: number; notes?: string; date?: string;
+  };
+  try {
+    body = await request.json() as typeof body;
+  } catch {
+    return jsonResponse({ error: "Invalid JSON body" }, 400, cors);
+  }
+  const today = new Date().toISOString().split('T')[0];
+  const payload = {
+    user_id: ANON_USER_ID,
+    date: body.date || today,
+    activity_type: body.activity_type,
+    duration_minutes: body.duration_minutes,
+    intensity: body.intensity || 'moderate',
+    calories_burned: body.calories_burned || null,
+    heart_rate_avg: body.heart_rate_avg || null,
+    notes: body.notes || null
+  };
+  const resp = await supabase(env, 'cross_training_log', 'POST', payload);
+  if (!resp.ok) {
+    const detail = await resp.text();
+    return jsonResponse({ error: 'Failed to log cross-training', detail }, 500, cors);
+  }
+  return jsonResponse({ success: true }, 200, cors);
+}
+
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {

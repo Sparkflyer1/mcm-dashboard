@@ -1726,14 +1726,16 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
   <!-- ── TAB 3: STRAVA ──────────────────────────────────── -->
   <div id="d-tab-strava" class="d-tab-panel">
     <div id="d-athlete-card" class="card athlete-card" style="display:flex;align-items:center;gap:16px;padding:20px;margin-bottom:18px">
-      <div id="d-athlete-avatar" style="width:52px;height:52px;border-radius:50%;background:#BADA55;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#302E32;flex-shrink:0" id="d-athlete-initials-wrap">
+      <div id="d-athlete-avatar" style="width:52px;height:52px;border-radius:50%;background:#BADA55;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#302E32;flex-shrink:0">
         <span id="d-athlete-initials">—</span>
       </div>
       <div style="flex:1">
-        <div id="d-athlete-fullname" style="font-size:18px;font-weight:700;color:#302E32">Connecting…</div>
-        <div id="d-athlete-stats" style="font-size:13px;color:#706E72;margin-top:2px">Connect Strava to see your profile</div>
+        <div id="d-athlete-fullname" style="font-size:18px;font-weight:700;color:var(--text,#F5F5F4)">Connecting…</div>
+        <div id="d-athlete-stats" style="font-size:13px;color:#9A9898;margin-top:2px">Connect Strava to see your profile</div>
       </div>
-      <div id="d-strava-connect-wrap"></div>
+      <div id="d-strava-connect-wrap">
+        <button class="btn btn-strava" id="d-strava-tab-btn" onclick="stravaConnect()" style="font-size:13px;padding:8px 16px">Connect Strava</button>
+      </div>
     </div>
 
     <!-- ── TRENDS ── -->
@@ -2250,6 +2252,7 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
 // ╚══════════════════════════════════════════════════════════════╝
 
 const API = 'https://mcm-strava-worker.tyleresterly.workers.dev';
+window.API = API; // expose to all script blocks
 const RACE_DATE = new Date('2026-10-26T07:00:00-04:00'); // MCM start time (EDT)
 
 // ── WEATHER ────────────────────────────────────────────────────
@@ -2405,6 +2408,8 @@ function applyStravaConnected(data) {
   if (statusEl) statusEl.classList.add('connected');
   if (textEl)   textEl.textContent = data.firstname || 'Connected';
   if (btnEl)  { btnEl.textContent = '✓ Strava'; btnEl.style.background = '#2e7d32'; btnEl.style.borderColor = '#2e7d32'; btnEl.onclick = null; }
+  // Update Strava tab athlete card if it's been rendered
+  if (typeof dRenderAthleteCard === 'function') dRenderAthleteCard();
 }
 
 async function checkStravaStatus() {
@@ -3348,6 +3353,7 @@ async function loadActivities() {
 
   const weeklyData = buildWeeklyData(acts);
   renderCharts(weeklyData);
+  chartsRendered = true; // mark so Strava tab doesn't re-render
 
   // Update last run header
   if (acts.length > 0) {
@@ -3523,9 +3529,12 @@ function dRenderAthleteCard() {
     if (a.firstname) {
       statsEl.textContent = `${a.city||''} ${a.state||''}`.trim() || 'Strava athlete';
     } else {
-      statsEl.innerHTML = '<a href="' + (window.API||'') + '/auth" style="color:#BADA55">Connect Strava →</a>';
+      statsEl.textContent = 'Connect Strava to see your profile and activities';
     }
   }
+  // Show/hide the connect button in the Strava tab
+  const tabBtn = document.getElementById('d-strava-tab-btn');
+  if (tabBtn) tabBtn.style.display = a.firstname ? 'none' : '';
 }
 
 // ── Load full training plan ───────────────────────────────
@@ -3537,15 +3546,17 @@ async function loadFullPlan() {
       renderMarathonPlan(state.fullPlan, state.activities || []);
     }
   } catch(e) {
+    console.error('loadFullPlan error:', e);
     const g = document.getElementById('marathon-plan-grid');
-    if (g) g.innerHTML = '<div class="runs-empty">Could not load plan.</div>';
+    if (g) g.innerHTML = '<div class="runs-empty">Could not load plan — check Worker connection.</div>';
   }
 }
 
 // ── Render full marathon plan ─────────────────────────────
 function renderMarathonPlan(fullPlan, activities) {
   const container = document.getElementById('marathon-plan-grid');
-  if (!container || !fullPlan.length) return;
+  if (!container) return;
+  if (!fullPlan.length) { container.innerHTML = '<div class="runs-empty">No plan data found.</div>'; return; }
 
   // Build actMap: date string → array of activities
   const actMap = {};
