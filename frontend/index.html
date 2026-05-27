@@ -1098,6 +1098,7 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
 /* ─ Form ─ */
 .form-label { font-family: 'JetBrains Mono', monospace !important; font-size: 0.65rem !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; }
 .form-input, .form-select, .form-textarea { border-radius: 0 !important; border-color: #D8D8D6 !important; font-family: 'League Spartan', sans-serif !important; }
+.form-input::placeholder, .form-textarea::placeholder { color: #B0ADB2 !important; }
 .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #BADA55 !important; outline: none !important; box-shadow: none !important; }
 .form-submit { background: #302E32 !important; color: #BADA55 !important; border-radius: 0 !important; font-family: 'League Spartan', sans-serif !important; font-weight: 800 !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; border: none !important; }
 .form-submit:hover { background: #1a1a1a !important; }
@@ -1127,6 +1128,36 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
 .page-container::-webkit-scrollbar { width: 4px; }
 .page-container::-webkit-scrollbar-track { background: #F6F6F6; }
 .page-container::-webkit-scrollbar-thumb { background: #D8D8D6; }
+
+/* ── Desktop hover states ─────────────────────────────────── */
+.stat-card, .week-card, .run-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.stat-card:hover, .week-card:hover, .run-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  cursor: pointer;
+}
+.nav-link:hover { background: rgba(186,218,85,0.12); cursor: pointer; }
+.btn:hover, .pill-btn:hover { opacity: 0.88; cursor: pointer; }
+.activity-row:hover { background: rgba(186,218,85,0.07); cursor: pointer; }
+.sidebar-nav a:hover, .sidebar-nav button:hover { background: rgba(186,218,85,0.1); }
+.cal-day { transition: border-color 0.12s ease; }
+.cal-day:hover { border-color: #BADA55; cursor: pointer; }
+.week-day-card { transition: border-color 0.15s ease, transform 0.15s ease; }
+.week-day-card:hover { border-color: rgba(186,218,85,0.5); transform: translateY(-1px); }
+
+/* ── Desktop tab panel system ───────────────────────── */
+.d-nav-item { background: none; border: none; cursor: pointer; width: 100%; text-align: left; padding: 8px 14px; border-radius: 6px; font-size: 13px; color: #D8D8D6; font-family: inherit; letter-spacing: 0.03em; }
+.d-nav-item.active { background: rgba(186,218,85,0.15); color: #BADA55; font-weight: 600; }
+.d-nav-item:hover { background: rgba(186,218,85,0.08); color: #BADA55; }
+.d-tab-panels { flex: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+.d-tab-panel { display: none; flex: 1; overflow-y: auto; padding: 18px 26px; }
+.d-tab-panel.d-tab-active { display: block; }
+.d-tab-panel::-webkit-scrollbar { width: 4px; }
+.d-tab-panel::-webkit-scrollbar-thumb { background: #D8D8D6; border-radius: 2px; }
+.marathon-week-row:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+.d-section-header { margin-bottom: 18px; }
+.d-section-sub { font-size: 12px; color: #706E72; margin-top: 4px; }
+.athlete-card { transition: box-shadow 0.15s; }
 </style>
 
 <style id="mobile-shell-css">
@@ -1487,13 +1518,11 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
       <div class="d-sb-progress"><div class="d-sb-progress-fill" id="sb-progress-fill" style="width:0%"></div></div>
     </div>
     <nav class="d-sb-nav">
-      <a href="#today-card" class="d-nav-item active" onclick="dSetNav(this)">Today</a>
-      <a href="#week-section" class="d-nav-item" onclick="dSetNav(this)">This Week</a>
-      <a href="#trends-section" class="d-nav-item" onclick="dSetNav(this)">Trends</a>
-      <a href="#maps-section" class="d-nav-item" onclick="dSetNav(this)">Route Maps</a>
-      <a href="#runs-section" class="d-nav-item" onclick="dSetNav(this)">Recent Runs</a>
-      <a href="#manual-log-card" class="d-nav-item" onclick="dSetNav(this)">Log a Run</a>
-    </nav>
+  <button class="d-nav-item active" onclick="dSwitchTab('today')" id="dnb-today">Today's Plan</button>
+  <button class="d-nav-item" onclick="dSwitchTab('plan')" id="dnb-plan">Marathon Plan</button>
+  <button class="d-nav-item" onclick="dSwitchTab('strava')" id="dnb-strava">Strava</button>
+  <button class="d-nav-item" onclick="dSwitchTab('nutrition')" id="dnb-nutrition">Nutrition</button>
+</nav>
     <div class="d-sb-footer">
       <div class="d-sb-strava-status">
         <span class="d-strava-dot" id="sb-dot"></span>
@@ -1553,281 +1582,118 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
 <!-- ═══════════════════════════════════════════════
      PAGE
 ════════════════════════════════════════════════ -->
-<main class="page-container">
+<div class="d-tab-panels">
 
-  <!-- ── HERO: COUNTDOWN + TODAY'S WORKOUT ── -->
-  <div class="hero-row">
+  <!-- ── TAB 1: TODAY'S PLAN ───────────────────────────── -->
+  <div id="d-tab-today" class="d-tab-panel d-tab-active">
 
-    <!-- Countdown -->
-    <div id="countdown-card" class="card">
-      <div>
-        <div class="countdown-eyebrow">Race Day Countdown</div>
-        <div class="countdown-race-name">Marine Corps Marathon 2026</div>
-        <div class="countdown-date-label">October 26, 2026 · Washington D.C.</div>
-      </div>
-      <div id="countdown-display" class="countdown-digits">
-        <div class="cd-unit">
-          <span class="cd-num" id="cd-days">--</span>
-          <span class="cd-label">Days</span>
-        </div>
-        <span class="cd-sep">:</span>
-        <div class="cd-unit">
-          <span class="cd-num" id="cd-hours">--</span>
-          <span class="cd-label">Hours</span>
-        </div>
-        <span class="cd-sep">:</span>
-        <div class="cd-unit">
-          <span class="cd-num" id="cd-mins">--</span>
-          <span class="cd-label">Mins</span>
-        </div>
-        <span class="cd-sep">:</span>
-        <div class="cd-unit">
-          <span class="cd-num" id="cd-secs">--</span>
-          <span class="cd-label">Secs</span>
-        </div>
-      </div>
-    </div>
+    <!-- ── HERO: COUNTDOWN + TODAY'S WORKOUT ── -->
+    <div class="hero-row">
 
-    <!-- Today's Workout (flip card) -->
-    <div id="today-card" class="card">
-      <div class="today-flip-inner" id="today-flip-inner">
-        <!-- FRONT -->
-        <div class="card-flip-front">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-label">Today's Workout</div>
-            <div id="today-status-badge"></div>
-          </div>
-          <div id="today-workout-content">
-            <div class="today-workout-type" id="today-type">Loading…</div>
-            <div class="today-workout-detail" id="today-detail">Fetching your training plan…</div>
-            <div class="today-workout-meta" id="today-meta"></div>
-          </div>
-          <div class="workout-action-btns">
-            <button class="btn-did-it" id="btn-did-it" onclick="logWorkout('done')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              I DID IT
-            </button>
-            <button class="btn-skipped-it" id="btn-skipped-it" onclick="confirmSkip()">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              I SKIPPED IT
-            </button>
-          </div>
+      <!-- Countdown -->
+      <div id="countdown-card" class="card">
+        <div>
+          <div class="countdown-eyebrow">Race Day Countdown</div>
+          <div class="countdown-race-name">Marine Corps Marathon 2026</div>
+          <div class="countdown-date-label">October 26, 2026 · Washington D.C.</div>
         </div>
-        <!-- BACK (done state) -->
-        <div class="card-flip-back">
-          <div class="done-back-wrap">
-            <div class="done-back-check">✓</div>
-            <div class="done-back-label">Workout Done</div>
-            <div class="done-back-type" id="done-back-type">Easy Run</div>
-            <button class="done-back-reset" onclick="flipCardBack()">← Change</button>
+        <div id="countdown-display" class="countdown-digits">
+          <div class="cd-unit">
+            <span class="cd-num" id="cd-days">--</span>
+            <span class="cd-label">Days</span>
+          </div>
+          <span class="cd-sep">:</span>
+          <div class="cd-unit">
+            <span class="cd-num" id="cd-hours">--</span>
+            <span class="cd-label">Hours</span>
+          </div>
+          <span class="cd-sep">:</span>
+          <div class="cd-unit">
+            <span class="cd-num" id="cd-mins">--</span>
+            <span class="cd-label">Mins</span>
+          </div>
+          <span class="cd-sep">:</span>
+          <div class="cd-unit">
+            <span class="cd-num" id="cd-secs">--</span>
+            <span class="cd-label">Secs</span>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Skip Confirm Modal -->
-    <div class="skip-modal-overlay" id="skip-modal">
-      <div class="skip-modal-box">
-        <div class="skip-modal-title">Skip today's workout?</div>
-        <div class="skip-modal-sub">Rest days are part of training — but make sure<br>this is intentional, not just a bad morning.</div>
-        <div class="skip-modal-btns">
-          <button class="skip-cancel-btn" onclick="closeSkipModal()">Keep Going</button>
-          <button class="skip-confirm-btn" onclick="confirmSkipFinal()">Yes, Skip It</button>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /hero-row -->
-
-  <!-- Weather data elements (hidden — weather shown in sidebar) -->
-  <div style="display:none">
-    <span id="wx-emoji"></span><span id="wx-temp"></span>
-    <span id="wx-condition"></span><span id="wx-humidity"></span>
-    <span id="wx-wind"></span><span id="wx-uv"></span>
-    <div id="wx-badge"></div><div id="wx-tip"></div>
-    <div id="weather-loading"></div><div id="weather-content"></div>
-  </div>
-
-  <!-- ── 7-DAY STRIP ── -->
-  <div>
-    <div class="section-label">
-      <h2 id="week-section">This Week</h2>
-      <div class="line"></div>
-      <span class="text-muted text-sm" id="week-range"></span>
-    </div>
-    <div class="week-strip" id="week-strip">
-      <!-- Populated by JS -->
-    </div>
-  </div>
-
-  <!-- ── LOG A RUN ── -->
-    <!-- Manual Run Log -->
-    <div class="card" id="manual-log-card">
-      <div class="card-label" style="margin-bottom:0.875rem">Log a Run Manually</div>
-      <form id="manual-log-form" onsubmit="submitManualLog(event)">
-        <div class="form-group">
-          <label class="form-label" for="log-date">Date</label>
-          <input type="date" id="log-date" class="form-input" required>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="log-distance">Distance (mi)</label>
-            <input type="number" id="log-distance" class="form-input" step="0.01" min="0" placeholder="6.2" required>
+      <!-- Today's Workout (flip card) -->
+      <div id="today-card" class="card">
+        <div class="today-flip-inner" id="today-flip-inner">
+          <!-- FRONT -->
+          <div class="card-flip-front">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div class="card-label">Today's Workout</div>
+              <div id="today-status-badge"></div>
+            </div>
+            <div id="today-workout-content">
+              <div class="today-workout-type" id="today-type">Loading…</div>
+              <div class="today-workout-detail" id="today-detail">Fetching your training plan…</div>
+              <div class="today-workout-meta" id="today-meta"></div>
+            </div>
+            <div class="workout-action-btns">
+              <button class="btn-did-it" id="btn-did-it" onclick="logWorkout('done')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                I DID IT
+              </button>
+              <button class="btn-skipped-it" id="btn-skipped-it" onclick="confirmSkip()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                I SKIPPED IT
+              </button>
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="log-duration">Duration</label>
-            <input type="text" id="log-duration" class="form-input" placeholder="54:30" pattern="[0-9]+:[0-5][0-9]">
+          <!-- BACK (done state) -->
+          <div class="card-flip-back">
+            <div class="done-back-wrap">
+              <div class="done-back-check">✓</div>
+              <div class="done-back-label">Workout Done</div>
+              <div class="done-back-type" id="done-back-type">Easy Run</div>
+              <button class="done-back-reset" onclick="flipCardBack()">← Change</button>
+            </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="log-type">Type</label>
-            <select id="log-type" class="form-select">
-              <option value="easy_run">Easy Run</option>
-              <option value="tempo">Tempo Run</option>
-              <option value="long_run">Long Run</option>
-              <option value="intervals">Intervals</option>
-              <option value="race">Race</option>
-              <option value="cross_training">Cross Training</option>
-              <option value="rest">Rest / Recovery</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="log-hr">Avg HR (bpm)</label>
-            <input type="number" id="log-hr" class="form-input" min="60" max="220" placeholder="148">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="log-notes">Notes</label>
-          <textarea id="log-notes" class="form-textarea" placeholder="How did it feel?"></textarea>
-        </div>
-        <button type="submit" class="form-submit">LOG THIS RUN</button>
-      </form>
-    </div>
-
-  <!-- ── TRENDS ── -->
-  <div>
-    <div class="section-label">
-      <h2 id="trends-section">Training Trends</h2>
-      <div class="line"></div>
-      <span class="text-muted text-sm">Last 8 weeks</span>
-    </div>
-    <div class="trends-grid">
-
-      <!-- Weekly Mileage -->
-      <div class="chart-card">
-        <div class="chart-card-header">
-          <div>
-            <div class="card-label">Weekly Mileage</div>
-            <div class="chart-title">Miles / Week</div>
-          </div>
-          <div class="chart-stat">
-            <div class="chart-stat-val" id="stat-miles">--</div>
-            <div class="chart-stat-label">This week</div>
-            <div class="chart-stat-delta" id="stat-miles-delta"></div>
-          </div>
-        </div>
-        <canvas id="mileage-chart" class="trend-chart"></canvas>
-      </div>
-
-      <!-- Avg Pace -->
-      <div class="chart-card">
-        <div class="chart-card-header">
-          <div>
-            <div class="card-label">Average Pace</div>
-            <div class="chart-title">Min / Mile</div>
-          </div>
-          <div class="chart-stat">
-            <div class="chart-stat-val" id="stat-pace">--:--</div>
-            <div class="chart-stat-label">This week avg</div>
-            <div class="chart-stat-delta" id="stat-pace-delta"></div>
-          </div>
-        </div>
-        <canvas id="pace-chart" class="trend-chart"></canvas>
-      </div>
-
-      <!-- Heart Rate -->
-      <div class="chart-card">
-        <div class="chart-card-header">
-          <div>
-            <div class="card-label">Heart Rate</div>
-            <div class="chart-title">Avg BPM</div>
-          </div>
-          <div class="chart-stat">
-            <div class="chart-stat-val" id="stat-hr">--</div>
-            <div class="chart-stat-label">This week avg</div>
-            <div class="chart-stat-delta" id="stat-hr-delta"></div>
-          </div>
-        </div>
-        <canvas id="hr-chart" class="trend-chart"></canvas>
-      </div>
-
-    </div>
-  </div><!-- /trends -->
-
-  <!-- ── MAPS ── -->
-  <div>
-    <div class="section-label">
-      <h2 id="maps-section">Maps</h2>
-      <div class="line"></div>
-    </div>
-    <div class="maps-grid">
-
-      <!-- GPS Post-Run Map -->
-      <div class="map-card">
-        <div class="map-card-header">
-          <div>
-            <div class="card-label">Last Run</div>
-            <div class="chart-title" style="font-size:1rem" id="last-run-name">GPS Route</div>
-          </div>
-          <div id="last-run-stats" style="text-align:right;font-size:0.75rem;color:var(--muted)"></div>
-        </div>
-        <div class="map-container" id="map-gps">
-          <div class="map-placeholder">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2e2e2e" stroke-width="1.5">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-            </svg>
-            <p>Add your Mapbox token below to see GPS routes from Strava</p>
-          </div>
-        </div>
-        <div class="map-token-input-row">
-          <input type="text" id="mapbox-token-input" placeholder="pk.eyJ1... — paste Mapbox public token" />
-          <button class="btn btn-lime" style="padding:0.4rem 0.875rem;font-size:0.8rem;" onclick="initMaps()">Load</button>
         </div>
       </div>
 
-      <!-- Suggested Route -->
-      <div class="map-card">
-        <div class="map-card-header">
-          <div>
-            <div class="card-label">Suggested Route</div>
-            <div class="chart-title" style="font-size:1rem">Today's Plan</div>
+      <!-- Skip Confirm Modal -->
+      <div class="skip-modal-overlay" id="skip-modal">
+        <div class="skip-modal-box">
+          <div class="skip-modal-title">Skip today's workout?</div>
+          <div class="skip-modal-sub">Rest days are part of training — but make sure<br>this is intentional, not just a bad morning.</div>
+          <div class="skip-modal-btns">
+            <button class="skip-cancel-btn" onclick="closeSkipModal()">Keep Going</button>
+            <button class="skip-confirm-btn" onclick="confirmSkipFinal()">Yes, Skip It</button>
           </div>
-          <button class="btn btn-ghost" onclick="fetchSuggestedRoute()" style="padding:0.3rem 0.7rem;font-size:0.75rem;">Refresh</button>
-        </div>
-        <div class="map-container" id="map-route">
-          <div class="map-placeholder">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2e2e2e" stroke-width="1.5">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
-            <p>Suggested route map will appear once you add your Mapbox token</p>
-          </div>
-        </div>
-        <div style="padding:0.75rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:1rem;font-size:0.75rem;color:var(--muted);">
-          <span id="route-distance">Distance: —</span>
-          <span id="route-elevation">Elevation: —</span>
-          <span id="route-type">Type: —</span>
         </div>
       </div>
 
-    </div>
-  </div><!-- /maps -->
+    </div><!-- /hero-row -->
 
-  <!-- ── BOTTOM: CALENDAR + RECENT RUNS + FORM ── -->
-  <div class="bottom-grid">
+    <!-- Weather data elements (hidden — weather shown in sidebar) -->
+    <div style="display:none">
+      <span id="wx-emoji"></span><span id="wx-temp"></span>
+      <span id="wx-condition"></span><span id="wx-humidity"></span>
+      <span id="wx-wind"></span><span id="wx-uv"></span>
+      <div id="wx-badge"></div><div id="wx-tip"></div>
+      <div id="weather-loading"></div><div id="weather-content"></div>
+    </div>
+
+    <!-- ── 7-DAY STRIP ── -->
+    <div>
+      <div class="section-label">
+        <h2 id="week-section">This Week</h2>
+        <div class="line"></div>
+        <span class="text-muted text-sm" id="week-range"></span>
+      </div>
+      <div class="week-strip" id="week-strip">
+        <!-- Populated by JS -->
+      </div>
+    </div>
 
     <!-- Monthly Calendar -->
-    <div class="card" id="calendar-card">
+    <div class="card" id="calendar-card" style="margin-top:18px">
       <div class="calendar-nav">
         <button class="calendar-nav-btn" onclick="calNav(-1)" aria-label="Previous month">&#8592;</button>
         <span class="calendar-month-label" id="cal-month-label">May 2026</span>
@@ -1844,8 +1710,152 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
       </div>
     </div>
 
+  </div><!-- /d-tab-today -->
+
+  <!-- ── TAB 2: MARATHON PLAN ──────────────────────────── -->
+  <div id="d-tab-plan" class="d-tab-panel">
+    <div class="d-section-header">
+      <h2 class="section-title">Marathon Plan</h2>
+      <div class="d-section-sub">MCM 2026 · Jun 1 → Oct 26 · <span id="plan-total-weeks">21</span> weeks</div>
+    </div>
+    <div id="marathon-plan-grid" class="marathon-plan-grid">
+      <div class="runs-empty">Loading plan…</div>
+    </div>
+  </div>
+
+  <!-- ── TAB 3: STRAVA ──────────────────────────────────── -->
+  <div id="d-tab-strava" class="d-tab-panel">
+    <div id="d-athlete-card" class="card athlete-card" style="display:flex;align-items:center;gap:16px;padding:20px;margin-bottom:18px">
+      <div id="d-athlete-avatar" style="width:52px;height:52px;border-radius:50%;background:#BADA55;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#302E32;flex-shrink:0" id="d-athlete-initials-wrap">
+        <span id="d-athlete-initials">—</span>
+      </div>
+      <div style="flex:1">
+        <div id="d-athlete-fullname" style="font-size:18px;font-weight:700;color:#302E32">Connecting…</div>
+        <div id="d-athlete-stats" style="font-size:13px;color:#706E72;margin-top:2px">Connect Strava to see your profile</div>
+      </div>
+      <div id="d-strava-connect-wrap"></div>
+    </div>
+
+    <!-- ── TRENDS ── -->
+    <div>
+      <div class="section-label">
+        <h2 id="trends-section">Training Trends</h2>
+        <div class="line"></div>
+        <span class="text-muted text-sm">Last 8 weeks</span>
+      </div>
+      <div class="trends-grid">
+
+        <!-- Weekly Mileage -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="card-label">Weekly Mileage</div>
+              <div class="chart-title">Miles / Week</div>
+            </div>
+            <div class="chart-stat">
+              <div class="chart-stat-val" id="stat-miles">--</div>
+              <div class="chart-stat-label">This week</div>
+              <div class="chart-stat-delta" id="stat-miles-delta"></div>
+            </div>
+          </div>
+          <canvas id="mileage-chart" class="trend-chart"></canvas>
+        </div>
+
+        <!-- Avg Pace -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="card-label">Average Pace</div>
+              <div class="chart-title">Min / Mile</div>
+            </div>
+            <div class="chart-stat">
+              <div class="chart-stat-val" id="stat-pace">--:--</div>
+              <div class="chart-stat-label">This week avg</div>
+              <div class="chart-stat-delta" id="stat-pace-delta"></div>
+            </div>
+          </div>
+          <canvas id="pace-chart" class="trend-chart"></canvas>
+        </div>
+
+        <!-- Heart Rate -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="card-label">Heart Rate</div>
+              <div class="chart-title">Avg BPM</div>
+            </div>
+            <div class="chart-stat">
+              <div class="chart-stat-val" id="stat-hr">--</div>
+              <div class="chart-stat-label">This week avg</div>
+              <div class="chart-stat-delta" id="stat-hr-delta"></div>
+            </div>
+          </div>
+          <canvas id="hr-chart" class="trend-chart"></canvas>
+        </div>
+
+      </div>
+    </div><!-- /trends -->
+
+    <!-- ── MAPS ── -->
+    <div>
+      <div class="section-label">
+        <h2 id="maps-section">Maps</h2>
+        <div class="line"></div>
+      </div>
+      <div class="maps-grid">
+
+        <!-- GPS Post-Run Map -->
+        <div class="map-card">
+          <div class="map-card-header">
+            <div>
+              <div class="card-label">Last Run</div>
+              <div class="chart-title" style="font-size:1rem" id="last-run-name">GPS Route</div>
+            </div>
+            <div id="last-run-stats" style="text-align:right;font-size:0.75rem;color:var(--muted)"></div>
+          </div>
+          <div class="map-container" id="map-gps">
+            <div class="map-placeholder">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2e2e2e" stroke-width="1.5">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+              <p>Add your Mapbox token below to see GPS routes from Strava</p>
+            </div>
+          </div>
+          <div class="map-token-input-row">
+            <input type="text" id="mapbox-token-input" placeholder="pk.eyJ1... — paste Mapbox public token" />
+            <button class="btn btn-lime" style="padding:0.4rem 0.875rem;font-size:0.8rem;" onclick="initMaps()">Load</button>
+          </div>
+        </div>
+
+        <!-- Suggested Route -->
+        <div class="map-card">
+          <div class="map-card-header">
+            <div>
+              <div class="card-label">Suggested Route</div>
+              <div class="chart-title" style="font-size:1rem">Today's Plan</div>
+            </div>
+            <button class="btn btn-ghost" onclick="fetchSuggestedRoute()" style="padding:0.3rem 0.7rem;font-size:0.75rem;">Refresh</button>
+          </div>
+          <div class="map-container" id="map-route">
+            <div class="map-placeholder">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2e2e2e" stroke-width="1.5">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+              <p>Suggested route map will appear once you add your Mapbox token</p>
+            </div>
+          </div>
+          <div style="padding:0.75rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:1rem;font-size:0.75rem;color:var(--muted);">
+            <span id="route-distance">Distance: —</span>
+            <span id="route-elevation">Elevation: —</span>
+            <span id="route-type">Type: —</span>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /maps -->
+
     <!-- Recent Runs -->
-    <div class="card" id="runs-section">
+    <div class="card" id="runs-section" style="margin-top:18px">
       <div class="card-label" style="margin-bottom:0.875rem">Recent Runs</div>
       <div class="runs-list" id="runs-list">
         <div class="runs-empty">Loading runs from Strava…</div>
@@ -1855,10 +1865,77 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
       </button>
     </div>
 
+  </div><!-- /d-tab-strava -->
 
-  </div><!-- /bottom-grid -->
+  <!-- ── TAB 4: NUTRITION ───────────────────────────────── -->
+  <div id="d-tab-nutrition" class="d-tab-panel">
+    <div class="d-section-header">
+      <h2 class="section-title">Nutrition</h2>
+      <div class="d-section-sub" id="nutrition-recommendation-label">Loading today's recommendation…</div>
+    </div>
 
-</main>
+    <!-- Macro targets row -->
+    <div class="hero-row" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px">
+      <div class="card" style="padding:16px;text-align:center">
+        <div class="stat-label">Calories</div>
+        <div class="stat-value" id="n-cal-actual">—</div>
+        <div class="stat-label" style="font-size:11px">target: <span id="n-cal-target">—</span></div>
+      </div>
+      <div class="card" style="padding:16px;text-align:center">
+        <div class="stat-label">Protein</div>
+        <div class="stat-value" id="n-pro-actual">—<span style="font-size:13px">g</span></div>
+        <div class="stat-label" style="font-size:11px">target: <span id="n-pro-target">—</span>g</div>
+      </div>
+      <div class="card" style="padding:16px;text-align:center">
+        <div class="stat-label">Carbs</div>
+        <div class="stat-value" id="n-carb-actual">—<span style="font-size:13px">g</span></div>
+        <div class="stat-label" style="font-size:11px">target: <span id="n-carb-target">—</span>g</div>
+      </div>
+      <div class="card" style="padding:16px;text-align:center">
+        <div class="stat-label">Fat</div>
+        <div class="stat-value" id="n-fat-actual">—<span style="font-size:13px">g</span></div>
+        <div class="stat-label" style="font-size:11px">target: <span id="n-fat-target">—</span>g</div>
+      </div>
+    </div>
+
+    <!-- Log entry form -->
+    <div class="card" style="padding:20px;margin-bottom:18px">
+      <div class="card-title" style="margin-bottom:14px">Log Today</div>
+      <form id="nutrition-entry-form" onsubmit="submitNutritionEntry(event)" autocomplete="off">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr) auto;gap:10px;align-items:end">
+          <div>
+            <label class="form-label">Calories</label>
+            <input class="form-input" type="number" id="n-input-cal" placeholder="2400" min="0">
+          </div>
+          <div>
+            <label class="form-label">Protein (g)</label>
+            <input class="form-input" type="number" id="n-input-pro" placeholder="160" min="0">
+          </div>
+          <div>
+            <label class="form-label">Carbs (g)</label>
+            <input class="form-input" type="number" id="n-input-carb" placeholder="300" min="0">
+          </div>
+          <div>
+            <label class="form-label">Fat (g)</label>
+            <input class="form-input" type="number" id="n-input-fat" placeholder="80" min="0">
+          </div>
+          <button type="submit" class="btn btn-primary" style="height:38px;white-space:nowrap">Log →</button>
+        </div>
+        <div style="margin-top:10px">
+          <label class="form-label">Notes (optional)</label>
+          <input class="form-input" type="text" id="n-input-notes" placeholder="e.g. pre-race carb load, recovery day…">
+        </div>
+      </form>
+    </div>
+
+    <!-- Recent log list -->
+    <div class="card" style="padding:20px">
+      <div class="card-title" style="margin-bottom:14px">Recent Log</div>
+      <div id="nutrition-log-list"><div class="runs-empty">No entries yet.</div></div>
+    </div>
+  </div><!-- /d-tab-nutrition -->
+
+</div><!-- /d-tab-panels -->
   </div><!-- /d-main -->
 </div><!-- /app-shell -->
 
@@ -2021,20 +2098,20 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
 
       <div class="m-inputs-grid">
         <div class="m-input-box">
-          <div class="m-brow" style="margin-bottom:4px">Distance</div>
-          <input class="m-input-field" id="m-dist-input" type="text" value="5.0 mi" />
+          <div class="m-brow" style="margin-bottom:4px">Distance (mi)</div>
+          <input class="m-input-field" id="m-dist-input" type="number" step="0.01" min="0" placeholder="0.0" />
         </div>
         <div class="m-input-box">
           <div class="m-brow" style="margin-bottom:4px">Duration</div>
-          <input class="m-input-field" id="m-dur-input" type="text" value="46:50" />
+          <input class="m-input-field" id="m-dur-input" type="text" placeholder="mm:ss" />
         </div>
         <div class="m-input-box">
           <div class="m-brow" style="margin-bottom:4px">Avg Pace</div>
-          <input class="m-input-field highlight" id="m-pace-input" type="text" value="9:22 /mi" />
+          <input class="m-input-field highlight" id="m-pace-input" type="text" placeholder="auto" readonly />
         </div>
         <div class="m-input-box">
-          <div class="m-brow" style="margin-bottom:4px">Avg HR</div>
-          <input class="m-input-field" id="m-hr-input" type="text" value="148 bpm" />
+          <div class="m-brow" style="margin-bottom:4px">Avg HR (bpm)</div>
+          <input class="m-input-field" id="m-hr-input" type="number" min="60" max="220" placeholder="—" />
         </div>
       </div>
 
@@ -2047,7 +2124,7 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
 
       <div style="flex:1">
         <div class="m-brow" style="margin-bottom:5px">Notes</div>
-        <textarea class="m-notes-area" id="m-notes" placeholder="How did it feel?">Felt strong — HR stayed in Z2 the whole time...</textarea>
+        <textarea class="m-notes-area" id="m-notes" placeholder="How did it feel?"></textarea>
       </div>
 
       <div class="m-log-btns">
@@ -2060,66 +2137,57 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
   <!-- ── TAB 4: TRENDS ─────────────────────────────────────────── -->
   <div id="m-trends" class="m-tab">
     <div class="m-readiness-hero">
-      <div class="m-brow dark">Today's Readiness</div>
+      <div class="m-brow dark">Training Summary</div>
       <div class="m-readiness-score">
-        <div class="m-readiness-num">74</div>
+        <div id="mt-week-mi" class="m-readiness-num">—</div>
         <div>
-          <div class="m-readiness-denom">/ 100</div>
-          <div class="m-readiness-tag">Good</div>
+          <div class="m-readiness-denom">mi</div>
+          <div class="m-readiness-tag" id="mt-week-tag">this week</div>
         </div>
       </div>
       <div class="m-readiness-vitals">
-        <div><div class="m-vital-v">58ms</div><div class="m-vital-l">HRV</div></div>
-        <div><div class="m-vital-v">7.2h</div><div class="m-vital-l">Sleep</div></div>
-        <div><div class="m-vital-v">56bpm</div><div class="m-vital-l">HR</div></div>
-        <div><div class="m-vital-v">84%</div><div class="m-vital-l">Batt</div></div>
+        <div><div class="m-vital-v" id="mt-runs-cnt">—</div><div class="m-vital-l">Runs</div></div>
+        <div><div class="m-vital-v" id="mt-avg-pace">—</div><div class="m-vital-l">Avg Pace</div></div>
+        <div><div class="m-vital-v" id="mt-avg-hr">—</div><div class="m-vital-l">Avg HR</div></div>
+        <div><div class="m-vital-v" id="mt-race-days">—</div><div class="m-vital-l">To Race</div></div>
       </div>
     </div>
 
     <div class="m-metrics-list">
       <div class="m-metric-card">
         <div class="m-metric-hd">
-          <div class="m-brow">VO₂max</div>
-          <div class="m-metric-val">48.2</div>
+          <div class="m-brow">Weekly Miles</div>
+          <div class="m-metric-val" id="mt-wk-mi-val">—</div>
         </div>
-        <svg viewBox="0 0 200 32" preserveAspectRatio="none" style="width:100%;height:32px;display:block">
-          <path d="M0,25 L28,22 L56,18 L85,20 L113,15 L141,10 L170,13 L200,8 L200,32 L0,32Z" fill="rgba(186,218,85,0.15)"/>
-          <path d="M0,25 L28,22 L56,18 L85,20 L113,15 L141,10 L170,13 L200,8" fill="none" stroke="#BADA55" stroke-width="1.5" stroke-linejoin="round"/>
-        </svg>
-        <div class="m-metric-sub">▲ +1.2 · improving</div>
+        <svg id="mt-mi-chart" viewBox="0 0 200 32" preserveAspectRatio="none" style="width:100%;height:32px;display:block"></svg>
+        <div class="m-metric-sub" id="mt-mi-sub">Loading…</div>
       </div>
 
       <div class="m-metric-card">
         <div class="m-metric-hd">
-          <div class="m-brow">Resting HR</div>
-          <div class="m-metric-val">56 bpm</div>
+          <div class="m-brow">Avg Pace</div>
+          <div class="m-metric-val" id="mt-pace-val">—</div>
         </div>
-        <svg viewBox="0 0 200 32" preserveAspectRatio="none" style="width:100%;height:32px;display:block">
-          <path d="M0,10 L28,15 L56,12 L85,18 L113,14 L141,19 L170,16 L200,20 L200,32 L0,32Z" fill="rgba(224,85,85,0.08)"/>
-          <path d="M0,10 L28,15 L56,12 L85,18 L113,14 L141,19 L170,16 L200,20" fill="none" stroke="#e05555" stroke-width="1.5" stroke-linejoin="round"/>
-        </svg>
-        <div class="m-metric-sub">▼ Down 2 bpm · great</div>
+        <svg id="mt-pace-chart" viewBox="0 0 200 32" preserveAspectRatio="none" style="width:100%;height:32px;display:block"></svg>
+        <div class="m-metric-sub" id="mt-pace-sub">Loading…</div>
       </div>
 
       <div class="m-metric-card">
         <div class="m-metric-hd">
-          <div class="m-brow">HRV</div>
-          <div class="m-metric-val">58ms</div>
+          <div class="m-brow">Avg Heart Rate</div>
+          <div class="m-metric-val" id="mt-hr-val">—</div>
         </div>
-        <svg viewBox="0 0 200 32" preserveAspectRatio="none" style="width:100%;height:32px;display:block">
-          <path d="M0,22 L28,18 L56,24 L85,14 L113,20 L141,10 L170,16 L200,12 L200,32 L0,32Z" fill="rgba(186,218,85,0.15)"/>
-          <path d="M0,22 L28,18 L56,24 L85,14 L113,20 L141,10 L170,16 L200,12" fill="none" stroke="#BADA55" stroke-width="1.5" stroke-linejoin="round"/>
-        </svg>
-        <div class="m-metric-sub">▲ +8ms vs baseline</div>
+        <svg id="mt-hr-chart" viewBox="0 0 200 32" preserveAspectRatio="none" style="width:100%;height:32px;display:block"></svg>
+        <div class="m-metric-sub" id="mt-hr-sub">Loading…</div>
       </div>
 
       <div class="m-load-card">
         <div class="m-brow" style="margin-bottom:6px">Training Load</div>
         <div class="m-load-hd">
-          <div class="m-load-val">1.04 <span class="m-load-unit">ATL:CTL</span></div>
-          <div class="m-load-tag">Productive Zone</div>
+          <div class="m-load-val" id="mt-load-val">— <span class="m-load-unit">ATL:CTL</span></div>
+          <div class="m-load-tag" id="mt-load-tag">—</div>
         </div>
-        <div class="m-prog-bar"><div class="m-prog-bar-fill" style="width:54%"></div></div>
+        <div class="m-prog-bar"><div class="m-prog-bar-fill" id="mt-load-bar" style="width:0%"></div></div>
       </div>
     </div>
   </div>
@@ -3265,6 +3333,10 @@ async function loadActivities() {
   }
 
   state.activities = acts;
+  // If trends tab is open, refresh it now that data is ready
+  if (document.getElementById('m-trends')?.classList.contains('m-active')) {
+    if (typeof window.mRenderTrends === 'function') window.mRenderTrends();
+  }
 
   renderRunsList(acts.slice(0, 8));
   renderWeekStrip(acts);
@@ -3290,9 +3362,6 @@ async function loadActivities() {
 }
 
 async function init() {
-  // Set today's date in form
-  document.getElementById('log-date').valueAsDate = new Date();
-
   // Countdown
   updateCountdown();
   setInterval(updateCountdown, 1000);
@@ -3324,10 +3393,47 @@ init();
 </script>
 
 <script>
-// ── Direction D sidebar helpers ──────────────────────────────
-function dSetNav(el) {
-  document.querySelectorAll('.d-nav-item').forEach(a => a.classList.remove('active'));
-  el.classList.add('active');
+// ── Desktop tab switching ────────────────────────────────
+let chartsRendered = false;
+let nutritionLoaded = false;
+let marathonPlanLoaded = false;
+
+function dSwitchTab(name) {
+  document.querySelectorAll('.d-nav-item').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('dnb-' + name);
+  if (btn) btn.classList.add('active');
+
+  document.querySelectorAll('.d-tab-panel').forEach(p => p.classList.remove('d-tab-active'));
+  const panel = document.getElementById('d-tab-' + name);
+  if (panel) panel.classList.add('d-tab-active');
+
+  if (name === 'strava') {
+    // Lazy-render charts on first activation
+    if (!chartsRendered && (state.activities || []).length) {
+      const weeklyData = buildWeeklyData ? buildWeeklyData(state.activities) : null;
+      if (weeklyData && typeof renderCharts === 'function') { renderCharts(weeklyData); chartsRendered = true; }
+    }
+    // Resize Chart.js instances if they exist
+    ['mileage-chart','pace-chart','hr-chart'].forEach(id => {
+      const c = document.getElementById(id);
+      if (c && c._chart) c._chart.resize();
+    });
+    // Resize Mapbox if initialized
+    if (state.mapGPS)   setTimeout(() => state.mapGPS.resize(),   50);
+    if (state.mapRoute) setTimeout(() => state.mapRoute.resize(), 50);
+    // Update athlete card
+    dRenderAthleteCard();
+  }
+
+  if (name === 'plan') {
+    if (!marathonPlanLoaded) { marathonPlanLoaded = true; loadFullPlan(); }
+    else if ((state.fullPlan||[]).length) renderMarathonPlan(state.fullPlan, state.activities);
+  }
+
+  if (name === 'nutrition' && !nutritionLoaded) {
+    nutritionLoaded = true;
+    loadNutritionLog();
+  }
 }
 
 // Sync Strava connection status to sidebar + topbar
@@ -3394,29 +3500,6 @@ function dSyncCountdown() {
   if (sbWeek) sbWeek.textContent = weekNum ? `Wk ${weekNum} of 18` : 'Pre-Training';
 }
 
-// Highlight active nav on scroll
-function dSyncActiveNav() {
-  const sections = [
-    { id: 'today-card',      link: 'Today'       },
-    { id: 'week-section',    link: 'This Week'   },
-    { id: 'trends-section',  link: 'Trends'      },
-    { id: 'maps-section',    link: 'Route Maps'  },
-    { id: 'runs-section',    link: 'Recent Runs' },
-    { id: 'manual-log-card', link: 'Log a Run'   },
-  ];
-  const container = document.querySelector('.page-container');
-  if (!container) return;
-  const scrollTop = container.scrollTop;
-  let active = sections[0];
-  for (const s of sections) {
-    const el = document.getElementById(s.id);
-    if (el && el.offsetTop - container.offsetTop <= scrollTop + 80) active = s;
-  }
-  document.querySelectorAll('.d-nav-item').forEach(a => {
-    a.classList.toggle('active', a.textContent.trim() === active.link);
-  });
-}
-
 // Run on load + interval
 document.addEventListener('DOMContentLoaded', () => {
   // Handle redirect back from Strava OAuth
@@ -3426,9 +3509,185 @@ document.addEventListener('DOMContentLoaded', () => {
     checkStravaStatus();
   }
   dSyncCountdown();
-  const pc = document.querySelector('.page-container');
-  if (pc) pc.addEventListener('scroll', dSyncActiveNav);
 });
+
+// ── Athlete card renderer ─────────────────────────────────
+function dRenderAthleteCard() {
+  const a = state.athlete || {};
+  const nameEl = document.getElementById('d-athlete-fullname');
+  const statsEl = document.getElementById('d-athlete-stats');
+  const initEl  = document.getElementById('d-athlete-initials');
+  if (nameEl) nameEl.textContent = a.firstname ? `${a.firstname} ${a.lastname||''}`.trim() : 'Not connected';
+  if (initEl) initEl.textContent = a.firstname ? ((a.firstname[0]||'')+(a.lastname?.[0]||'')).toUpperCase() : '?';
+  if (statsEl) {
+    if (a.firstname) {
+      statsEl.textContent = `${a.city||''} ${a.state||''}`.trim() || 'Strava athlete';
+    } else {
+      statsEl.innerHTML = '<a href="' + (window.API||'') + '/auth" style="color:#BADA55">Connect Strava →</a>';
+    }
+  }
+}
+
+// ── Load full training plan ───────────────────────────────
+async function loadFullPlan() {
+  try {
+    const res = await fetch(window.API + '/plan/all');
+    if (res.ok) {
+      state.fullPlan = await res.json();
+      renderMarathonPlan(state.fullPlan, state.activities || []);
+    }
+  } catch(e) {
+    const g = document.getElementById('marathon-plan-grid');
+    if (g) g.innerHTML = '<div class="runs-empty">Could not load plan.</div>';
+  }
+}
+
+// ── Render full marathon plan ─────────────────────────────
+function renderMarathonPlan(fullPlan, activities) {
+  const container = document.getElementById('marathon-plan-grid');
+  if (!container || !fullPlan.length) return;
+
+  // Build actMap: date string → array of activities
+  const actMap = {};
+  (activities||[]).forEach(a => {
+    const d = (a.start_date_local||a.date||'').split('T')[0];
+    if (!actMap[d]) actMap[d] = [];
+    actMap[d].push(a);
+  });
+
+  // Group plan by week_number
+  const byWeek = {};
+  fullPlan.forEach(p => {
+    const wk = p.week_number ?? 0;
+    if (!byWeek[wk]) byWeek[wk] = [];
+    byWeek[wk].push(p);
+  });
+
+  const typeColors = { easy_run:'#4A9EFF', tempo:'#FFB347', intervals:'#FF6B6B', long_run:'#BADA55', rest:'#706E72', race:'#FF6B6B' };
+
+  let html = `<div style="display:flex;flex-direction:column;gap:8px">`;
+  Object.keys(byWeek).sort((a,b)=>Number(a)-Number(b)).forEach(wk => {
+    const days = byWeek[wk].sort((a,b)=>a.workout_date.localeCompare(b.workout_date));
+    const plannedMi = days.reduce((s,p)=>s+(parseFloat(p.distance_miles)||0),0);
+    const actualMi  = days.reduce((s,p)=>{
+      const acts = actMap[p.workout_date]||[];
+      return s + acts.reduce((ss,a)=>ss+(a.distance||0)/1609.34,0);
+    },0);
+    const wkNum = Number(wk);
+    const wkLabel = wkNum < 0 ? `Base ${wkNum}` : wkNum === 0 ? 'Base 0' : `Week ${wkNum}`;
+
+    // First and last date of week
+    const firstDate = days[0]?.workout_date || '';
+    const lastDate  = days[days.length-1]?.workout_date || '';
+    const fmtDate = d => { if (!d) return ''; const dt=new Date(d+'T12:00:00'); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}); };
+
+    html += `<div class="card marathon-week-row" style="padding:14px 18px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-weight:700;font-size:13px;min-width:60px">${wkLabel}</div>
+        <div style="font-size:12px;color:#706E72;flex:1">${fmtDate(firstDate)} – ${fmtDate(lastDate)}</div>
+        <div style="font-size:12px;color:#706E72">${plannedMi.toFixed(1)} mi planned</div>
+        <div style="font-size:12px;color:${actualMi>0?'#BADA55':'#706E72'}">${actualMi>0?actualMi.toFixed(1)+' mi done':'—'}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">`;
+
+    days.forEach(p => {
+      const acts = actMap[p.workout_date]||[];
+      const done = acts.some(a=>(a.distance||0)>0);
+      const isRest = p.workout_type==='rest';
+      const color = typeColors[p.workout_type]||'#706E72';
+      const mi = parseFloat(p.distance_miles)||0;
+      const dt = new Date(p.workout_date+'T12:00:00');
+      const dayLabel = dt.toLocaleDateString('en-US',{weekday:'short'});
+      const dateLabel = dt.toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
+      html += `<div title="${p.description||p.workout_type}" style="
+        background:${done?color+'22':'rgba(255,255,255,0.04)'};
+        border:1.5px solid ${done?color:'rgba(255,255,255,0.1)'};
+        border-radius:8px;padding:6px 10px;min-width:70px;cursor:default;
+        transition:transform 0.1s;font-size:11px;text-align:center">
+        <div style="color:#706E72;font-size:10px">${dayLabel} ${dateLabel}</div>
+        <div style="color:${isRest?'#706E72':color};font-weight:600;margin-top:2px">${isRest?'Rest':(mi>0?mi+'mi':p.workout_type.replace('_',' '))}</div>
+        ${done?'<div style="color:#BADA55;font-size:10px;margin-top:2px">✓ done</div>':''}
+      </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+// ── Nutrition: load today's log ───────────────────────────
+async function loadNutritionLog() {
+  try {
+    const res = await fetch(window.API + '/nutrition/today');
+    if (res.ok) {
+      const data = await res.json();
+      renderNutritionSummary(data);
+    }
+  } catch(e) {
+    const el = document.getElementById('nutrition-log-list');
+    if (el) el.innerHTML = '<div class="runs-empty">Connect to load nutrition data.</div>';
+  }
+}
+
+// ── Nutrition: render summary ─────────────────────────────
+function renderNutritionSummary(data) {
+  const log = data.log || {};
+  const rec = data.recommendation || {};
+  const label = document.getElementById('nutrition-recommendation-label');
+  if (label && data.tomorrowWorkout) {
+    label.textContent = `Tomorrow: ${data.tomorrowWorkout} — today's targets adjusted`;
+  } else if (label) {
+    label.textContent = 'Based on your baseline targets';
+  }
+  const s = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v||'—'; };
+  s('n-cal-actual',  log.calories_actual  || '—');
+  s('n-pro-actual',  log.protein_g_actual  ? Math.round(log.protein_g_actual)  : '—');
+  s('n-carb-actual', log.carbs_g_actual    ? Math.round(log.carbs_g_actual)    : '—');
+  s('n-fat-actual',  log.fat_g_actual      ? Math.round(log.fat_g_actual)      : '—');
+  s('n-cal-target',  rec.calories  || '—');
+  s('n-pro-target',  rec.protein_g || '—');
+  s('n-carb-target', rec.carbs_g   || '—');
+  s('n-fat-target',  rec.fat_g     || '—');
+  // Render log list
+  const listEl = document.getElementById('nutrition-log-list');
+  if (listEl && log.calories_actual) {
+    listEl.innerHTML = `<div style="display:flex;gap:24px;padding:12px 0;border-bottom:1px solid var(--border,#E8E8E8)">
+      <span style="font-size:13px;color:#706E72">Today</span>
+      <span style="font-size:13px">${log.calories_actual} cal</span>
+      <span style="font-size:13px">${Math.round(log.protein_g_actual||0)}g protein</span>
+      <span style="font-size:13px">${Math.round(log.carbs_g_actual||0)}g carbs</span>
+      <span style="font-size:13px">${Math.round(log.fat_g_actual||0)}g fat</span>
+      ${log.notes?`<span style="font-size:12px;color:#706E72;font-style:italic">${log.notes}</span>`:''}
+    </div>`;
+  }
+}
+
+// ── Nutrition: submit entry ───────────────────────────────
+async function submitNutritionEntry(e) {
+  e.preventDefault();
+  const payload = {
+    calories: parseInt(document.getElementById('n-input-cal').value)||null,
+    protein_g: parseFloat(document.getElementById('n-input-pro').value)||null,
+    carbs_g: parseFloat(document.getElementById('n-input-carb').value)||null,
+    fat_g: parseFloat(document.getElementById('n-input-fat').value)||null,
+    notes: document.getElementById('n-input-notes').value||null
+  };
+  const btn = e.target.querySelector('button[type="submit"]');
+  if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
+  try {
+    const res = await fetch(window.API + '/nutrition/log', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      toast('Nutrition logged ✓', 'ok');
+      e.target.reset();
+      nutritionLoaded = false; // allow reload
+      loadNutritionLog();
+    } else { toast('Could not save', 'err'); }
+  } catch(err) { toast('Saved locally', 'ok'); }
+  if (btn) { btn.textContent = 'Log →'; btn.disabled = false; }
+}
 
 // ══ MOBILE SHELL LOGIC ════════════════════════════════════════════
 (function() {
@@ -3443,6 +3702,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Refresh runs list when opening More tab
     if (name === 'more') mRenderRuns('all');
     if (name === 'week') mRenderWeek();
+    if (name === 'trends') { if (typeof window.mRenderTrends === 'function') window.mRenderTrends(); }
   };
 
   // ── Sync today panel ─────────────────────────────────────────
@@ -3544,7 +3804,8 @@ document.addEventListener('DOMContentLoaded', () => {
       d.setDate(weekStart.getDate() + i);
       const isToday = d.toDateString() === now.toDateString();
       const isPast = d < now && !isToday;
-      const hasDone = isPast; // placeholder; could check activities
+      const dateKey2 = d.toISOString().split('T')[0];
+      const hasDone = isPast && (state.activities || []).some(a => (a.start_date_local || a.date || '').split('T')[0] === dateKey2 && (a.distance || 0) > 0);
       const bg = isToday ? 'rgba(186,218,85,0.2)' : '#fff';
       const border = isToday ? '#BADA55' : '#ECECEC';
       const dotBg = hasDone ? '#BADA55' : isToday ? 'rgba(186,218,85,0.6)' : '#D8D8D6';
@@ -3616,6 +3877,140 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     mRenderWeekDots('m-week-dots-today');
+  };
+
+  // ── Trends tab: real metrics from Strava activities ─────────────────
+  window.mRenderTrends = function mRenderTrends() {
+    // Guard: bail out with a placeholder if Strava data hasn't loaded yet
+    if (!state.activities || !state.activities.length) {
+      const heroNum = document.getElementById('mt-week-mi');
+      if (heroNum) heroNum.textContent = '…';
+      const heroTag = document.getElementById('mt-week-tag');
+      if (heroTag) heroTag.textContent = 'Connecting to Strava…';
+      return;
+    }
+    const acts = (state.activities || []).filter(a => (a.distance || 0) > 0);
+    const now  = new Date();
+
+    // Week boundaries (Sun–Sat)
+    const weekStart = (d) => {
+      const s = new Date(d); s.setDate(s.getDate() - s.getDay()); s.setHours(0,0,0,0); return s;
+    };
+    const thisWeekStart = weekStart(now);
+
+    // Helper
+    const $ = id => document.getElementById(id);
+    const fmt = (id, val) => { const el = $(id); if (el) el.textContent = val; };
+    function fmtPace(secs) {
+      if (!secs || secs <= 0) return '—';
+      return Math.floor(secs/60) + ':' + String(Math.round(secs%60)).padStart(2,'0');
+    }
+
+    // Build 8-week history (index 7 = current week)
+    const weeks = [];
+    for (let i = 7; i >= 0; i--) {
+      const wStart = new Date(thisWeekStart); wStart.setDate(wStart.getDate() - i * 7);
+      const wEnd   = new Date(wStart);        wEnd.setDate(wEnd.getDate() + 7);
+      const wActs  = acts.filter(a => {
+        const d = new Date((a.start_date_local || a.date || '').split('T')[0]);
+        return d >= wStart && d < wEnd;
+      });
+      const mi = wActs.reduce((s, a) => s + (a.distance || 0) / 1609.34, 0);
+      let pSum = 0, pCnt = 0;
+      wActs.forEach(a => {
+        const wmi = (a.distance || 0) / 1609.34, secs = a.moving_time || 0;
+        if (wmi >= 0.1 && secs > 0) { pSum += secs / wmi; pCnt++; }
+      });
+      const hrActs = wActs.filter(a => (a.average_heartrate || 0) > 0);
+      const avgHR  = hrActs.length ? hrActs.reduce((s,a)=>s+a.average_heartrate,0)/hrActs.length : 0;
+      weeks.push({ mi, pace: pCnt ? pSum/pCnt : 0, hr: avgHR, cnt: wActs.length });
+    }
+
+    const cur = weeks[7]; // current week
+
+    // Avg pace current week
+    const thisWeekActs = acts.filter(a => {
+      const d = new Date((a.start_date_local || a.date || '').split('T')[0]);
+      return d >= thisWeekStart;
+    });
+    let wPaceSum=0, wPaceCnt=0;
+    thisWeekActs.forEach(a => {
+      const wmi=(a.distance||0)/1609.34, secs=a.moving_time||0;
+      if (wmi>=0.1&&secs>0){wPaceSum+=secs/wmi;wPaceCnt++;}
+    });
+    const weekAvgPaceSecs = wPaceCnt>0 ? Math.round(wPaceSum/wPaceCnt) : 0;
+    const hrThisWeek = thisWeekActs.filter(a=>(a.average_heartrate||0)>0);
+    const weekAvgHR  = hrThisWeek.length ? Math.round(hrThisWeek.reduce((s,a)=>s+a.average_heartrate,0)/hrThisWeek.length) : 0;
+    const raceDays   = Math.max(0, Math.floor((RACE_DATE - now)/86400000));
+
+    // Hero values
+    fmt('mt-week-mi',   cur.mi.toFixed(1));
+    fmt('mt-runs-cnt',  cur.cnt);
+    fmt('mt-avg-pace',  fmtPace(weekAvgPaceSecs));
+    fmt('mt-avg-hr',    weekAvgHR > 0 ? weekAvgHR+'bpm' : '—');
+    fmt('mt-race-days', raceDays + 'd');
+
+    // Sparkline builder
+    function sparkline(vals, svgId, color, fillColor, invert) {
+      const svg = document.getElementById(svgId); if (!svg) return;
+      const filled = vals.filter(v=>v>0);
+      if (filled.length < 2) { svg.innerHTML='<text x="50%" y="60%" text-anchor="middle" fill="#666" font-size="9">No data</text>'; return; }
+      const mn=Math.min(...vals), mx=Math.max(...vals), range=mx-mn||1;
+      const W=200,H=32,pad=4;
+      const pts = vals.map((v,i)=>{
+        const x=(i/(vals.length-1))*W;
+        const norm=(v-mn)/range;
+        const y = invert ? pad+norm*(H-pad*2) : (H-pad)-norm*(H-pad*2);
+        return {x,y};
+      });
+      const linePts = pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L');
+      const lastP=pts[pts.length-1], firstP=pts[0];
+      const fillD=`M${firstP.x.toFixed(1)},${firstP.y.toFixed(1)} L${linePts.replace(/^[^ ]+ L/,'')} L${lastP.x.toFixed(1)},${H} L${firstP.x.toFixed(1)},${H}Z`;
+      svg.innerHTML=`<path d="${fillD}" fill="${fillColor}"/><path d="M${linePts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>`;
+    }
+
+    sparkline(weeks.map(w=>w.mi),   'mt-mi-chart',    '#BADA55','rgba(186,218,85,0.15)', false);
+    sparkline(weeks.map(w=>w.pace), 'mt-pace-chart',  '#BADA55','rgba(186,218,85,0.15)', true);
+    sparkline(weeks.map(w=>w.hr),   'mt-hr-chart',    '#e05555','rgba(224,85,85,0.08)',  false);
+
+    // Metric cards
+    const prevMi   = weeks[6]?.mi   || 0;
+    const miDiff   = cur.mi - prevMi;
+    fmt('mt-wk-mi-val', cur.mi.toFixed(1)+' mi');
+    fmt('mt-mi-sub', miDiff!==0 ? (miDiff>0?'▲ +':'▼ ')+Math.abs(miDiff).toFixed(1)+' mi vs last week' : 'Same as last week');
+
+    fmt('mt-pace-val', weekAvgPaceSecs>0 ? fmtPace(weekAvgPaceSecs)+'/mi' : '—');
+    const prevPace = weeks[6]?.pace || 0;
+    if (weekAvgPaceSecs>0 && prevPace>0) {
+      const diff=weekAvgPaceSecs-prevPace;
+      fmt('mt-pace-sub', (diff<=0?'▲ Faster by ':'▼ Slower by ')+Math.abs(Math.round(diff))+'s/mi vs last week');
+    } else {
+      fmt('mt-pace-sub', wPaceCnt>0 ? 'Based on '+wPaceCnt+' run(s) this week' : 'No runs this week');
+    }
+
+    fmt('mt-hr-val', weekAvgHR>0 ? weekAvgHR+' bpm' : '—');
+    const prevHR = weeks[6]?.hr || 0;
+    if (weekAvgHR>0 && prevHR>0) {
+      const diff=weekAvgHR-prevHR;
+      fmt('mt-hr-sub', (diff<=0?'▼ ':' ▲ +')+Math.abs(Math.round(diff))+' bpm vs last week');
+    } else {
+      fmt('mt-hr-sub', hrThisWeek.length>0 ? 'HR from '+hrThisWeek.length+' run(s)' : 'No HR data available');
+    }
+
+    // Training load: ATL (cur week) / CTL (4-wk avg)
+    const atl = cur.mi;
+    const ctl = weeks.slice(4,8).reduce((s,w)=>s+w.mi,0)/4 || 1;
+    const tsb = atl/ctl;
+    const el  = document.getElementById('mt-load-val');
+    if (el) el.innerHTML = tsb.toFixed(2)+' <span class="m-load-unit">ATL:CTL</span>';
+    let tag='Building Base', pct=40;
+    if (tsb<0.8){tag='Recovery / Low';pct=20;}
+    else if(tsb<1.0){tag='Maintenance';pct=35;}
+    else if(tsb<1.1){tag='Productive Zone';pct=60;}
+    else if(tsb<1.3){tag='High Load';pct=80;}
+    else{tag='Overreaching';pct=95;}
+    fmt('mt-load-tag', tag);
+    const bar=document.getElementById('mt-load-bar'); if(bar) bar.style.width=pct+'%';
   };
 
   // ── Render RPE row ────────────────────────────────────────────
@@ -3703,14 +4098,57 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // ── Log run submit ────────────────────────────────────────────
-  window.mSubmitLogRun = function() {
-    const dist = document.getElementById('m-dist-input').value;
-    const dur = document.getElementById('m-dur-input').value;
-    const notes = document.getElementById('m-notes').value;
-    // Show toast and switch back
-    if (typeof showToast === 'function') showToast('Run logged! ' + dist + ' · ' + dur);
-    else alert('Run logged!');
+  window.mSubmitLogRun = async function() {
+    const distRaw = parseFloat(document.getElementById('m-dist-input').value) || null;
+    const durRaw  = document.getElementById('m-dur-input').value || '';
+    const hr      = parseInt(document.getElementById('m-hr-input').value) || null;
+    const notes   = document.getElementById('m-notes').value || null;
+    const selType = document.querySelector('.m-type-pill.selected');
+    const typeMap = {'Easy Run':'easy_run','Tempo':'tempo','Intervals':'intervals','Long Run':'long_run','Recovery':'rest'};
+    const workoutType = typeMap[selType?.textContent?.trim()] || 'easy_run';
+
+    // Parse duration mm:ss -> total minutes
+    let durationMins = null;
+    if (durRaw) {
+      const parts = durRaw.split(':');
+      durationMins = (parseInt(parts[0])||0) + ((parseInt(parts[1])||0)/60);
+      durationMins = Math.round(durationMins) || null;
+    }
+
+    const payload = {
+      status: 'done',
+      plan_id: null,
+      workout_type: workoutType,
+      distance_miles: distRaw,
+      duration_minutes: durationMins,
+      avg_heart_rate: hr,
+      notes,
+    };
+
+    const btn = document.querySelector('.m-btn-log');
+    if (btn) { btn.textContent = 'Logging…'; btn.disabled = true; }
+
+    try {
+      const res = await fetch(window.API + '/plan/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      toast(res.ok ? '✓ Run logged!' : 'Logged locally', 'ok');
+    } catch(e) {
+      toast('Run saved locally', 'ok');
+    }
+
+    if (btn) { btn.textContent = 'Log This Run →'; btn.disabled = false; }
+    // Clear form
+    document.getElementById('m-dist-input').value = '';
+    document.getElementById('m-dur-input').value = '';
+    document.getElementById('m-hr-input').value = '';
+    document.getElementById('m-pace-input').value = '';
+    document.getElementById('m-notes').value = '';
     mSwitchTab('today');
+    mSyncToday();
+    mRenderWeek();
   };
 
   // ── Initial render ────────────────────────────────────────────
@@ -3737,7 +4175,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const _origInterval = window.setInterval;
 })();
 
-setInterval(() => { dSyncStrava(); }, 1500);
+setInterval(() => { dSyncStrava(); }, 30000);
 </script>
 </body>
 </html>
