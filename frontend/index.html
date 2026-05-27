@@ -1522,6 +1522,7 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
   <button class="d-nav-item" onclick="dSwitchTab('plan')" id="dnb-plan">Marathon Plan</button>
   <button class="d-nav-item" onclick="dSwitchTab('strava')" id="dnb-strava">Strava</button>
   <button class="d-nav-item" onclick="dSwitchTab('nutrition')" id="dnb-nutrition">Nutrition</button>
+  <button class="d-nav-item" onclick="dSwitchTab('cross')" id="dnb-cross">Cross Training</button>
 </nav>
     <div class="d-sb-footer">
       <div class="d-sb-strava-status">
@@ -1936,6 +1937,55 @@ h1,h2,h3,h4,.f-headline { font-family: 'League Spartan', 'Arial Black', sans-ser
       <div id="nutrition-log-list"><div class="runs-empty">No entries yet.</div></div>
     </div>
   </div><!-- /d-tab-nutrition -->
+
+  <!-- ── TAB 5: CROSS TRAINING ─────────────────────────── -->
+  <div id="d-tab-cross" class="d-tab-panel">
+    <div class="d-section-header">
+      <h2 class="section-title">Cross Training</h2>
+      <div class="d-section-sub" id="cross-section-sub">Bike · Swim · Yoga · Strength · More</div>
+    </div>
+
+    <!-- Quick-add form -->
+    <div class="card" style="padding:20px;margin-bottom:18px">
+      <div class="card-title" style="margin-bottom:14px">Log Session</div>
+      <form id="cross-entry-form" onsubmit="submitCrossTraining(event)" autocomplete="off">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;color:var(--text-muted,#888);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">Activity</label>
+            <select id="cross-activity" required style="width:100%;padding:8px 10px;border:1.5px solid var(--border,#E8E8E8);border-radius:6px;background:var(--surface,#fff);color:var(--text,#302E32);font-size:14px">
+              <option value="" disabled selected>Select activity…</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;color:var(--text-muted,#888);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">Duration (min)</label>
+            <input type="number" id="cross-duration" min="1" max="480" placeholder="45" required
+              style="width:100%;padding:8px 10px;border:1.5px solid var(--border,#E8E8E8);border-radius:6px;background:var(--surface,#fff);color:var(--text,#302E32);font-size:14px">
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;color:var(--text-muted,#888);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">Intensity</label>
+            <select id="cross-intensity" style="width:100%;padding:8px 10px;border:1.5px solid var(--border,#E8E8E8);border-radius:6px;background:var(--surface,#fff);color:var(--text,#302E32);font-size:14px">
+              <option value="easy">Easy</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div>
+            <button type="submit" class="btn" style="padding:8px 20px;white-space:nowrap;height:36px">Log</button>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <input type="text" id="cross-notes" placeholder="Notes (optional)"
+            style="width:100%;padding:8px 10px;border:1.5px solid var(--border,#E8E8E8);border-radius:6px;background:var(--surface,#fff);color:var(--text,#302E32);font-size:14px;box-sizing:border-box">
+        </div>
+      </form>
+    </div>
+
+    <!-- Recent sessions -->
+    <div class="card" style="padding:20px">
+      <div class="card-title" style="margin-bottom:14px">Recent Sessions</div>
+      <div id="cross-log-list"><div class="runs-empty">Loading…</div></div>
+    </div>
+  </div><!-- /d-tab-cross -->
 
 </div><!-- /d-tab-panels -->
   </div><!-- /d-main -->
@@ -3403,6 +3453,7 @@ init();
 let chartsRendered = false;
 let nutritionLoaded = false;
 let marathonPlanLoaded = false;
+let crossTrainingLoaded = false;
 
 function dSwitchTab(name) {
   document.querySelectorAll('.d-nav-item').forEach(b => b.classList.remove('active'));
@@ -3439,6 +3490,11 @@ function dSwitchTab(name) {
   if (name === 'nutrition' && !nutritionLoaded) {
     nutritionLoaded = true;
     loadNutritionLog();
+  }
+
+  if (name === 'cross' && !crossTrainingLoaded) {
+    crossTrainingLoaded = true;
+    loadCrossTraining();
   }
 }
 
@@ -3698,6 +3754,101 @@ async function submitNutritionEntry(e) {
     } else { toast('Could not save', 'err'); }
   } catch(err) { toast('Saved locally', 'ok'); }
   if (btn) { btn.textContent = 'Log →'; btn.disabled = false; }
+}
+
+// ── Cross Training: load log + options ───────────────────────────
+async function loadCrossTraining() {
+  const listEl = document.getElementById('cross-log-list');
+  try {
+    const res = await fetch(window.API + '/cross-training');
+    if (!res.ok) throw new Error('fetch failed');
+    const data = await res.json();
+    const options = data.options || [];
+    const log     = data.log     || [];
+
+    // Populate activity select
+    const sel = document.getElementById('cross-activity');
+    if (sel && options.length) {
+      sel.innerHTML = '<option value="" disabled selected>Select activity…</option>';
+      options.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.activity;
+        opt.textContent = o.label || o.activity;
+        sel.appendChild(opt);
+      });
+    }
+
+    // Render log
+    if (!listEl) return;
+    if (!log.length) {
+      listEl.innerHTML = '<div class="runs-empty">No sessions logged yet. Add one above!</div>';
+      return;
+    }
+    const INTENSITY_COLOR = { easy: '#4CAF50', moderate: '#BADA55', hard: '#FF6B35' };
+    listEl.innerHTML = log.map(s => {
+      const d = new Date(s.date + 'T12:00:00');
+      const dateStr = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+      const ic = INTENSITY_COLOR[s.intensity] || '#888';
+      return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border,#E8E8E8)">
+        <div style="width:42px;height:42px;border-radius:8px;background:var(--surface2,#F5F5F4);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${crossActivityIcon(s.activity_type)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px">${s.activity_type}</div>
+          <div style="font-size:12px;color:var(--text-muted,#888)">${dateStr}</div>
+          ${s.notes ? `<div style="font-size:12px;color:var(--text-muted,#888);font-style:italic;margin-top:2px">${s.notes}</div>` : ''}
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:14px;font-weight:600">${s.duration_minutes} min</div>
+          <div style="font-size:11px;color:${ic};font-weight:600;text-transform:capitalize">${s.intensity || 'moderate'}</div>
+          ${s.calories_burned ? `<div style="font-size:11px;color:var(--text-muted,#888)">${s.calories_burned} cal</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    if (listEl) listEl.innerHTML = '<div class="runs-empty">Could not load cross-training data.</div>';
+  }
+}
+
+function crossActivityIcon(type) {
+  const icons = {
+    'Cycling': '🚴', 'Biking': '🚴', 'Bike': '🚴',
+    'Swimming': '🏊', 'Swim': '🏊',
+    'Yoga': '🧘', 'Pilates': '🧘',
+    'Strength': '🏋️', 'Weight Training': '🏋️', 'Weights': '🏋️',
+    'Elliptical': '🏃', 'Rowing': '🚣',
+    'Hiking': '🥾', 'Walking': '🚶',
+    'Basketball': '🏀', 'Tennis': '🎾', 'Soccer': '⚽',
+  };
+  return icons[type] || '💪';
+}
+
+// ── Cross Training: submit ────────────────────────────────────────
+async function submitCrossTraining(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type=submit]');
+  if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
+  try {
+    const payload = {
+      activity_type:    document.getElementById('cross-activity').value,
+      duration_minutes: parseInt(document.getElementById('cross-duration').value, 10),
+      intensity:        document.getElementById('cross-intensity').value,
+      notes:            document.getElementById('cross-notes').value || null,
+    };
+    const res = await fetch(window.API + '/cross-training/log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      toast('Session logged ✓', 'ok');
+      e.target.reset();
+      // Re-seed the activity dropdown placeholder after reset
+      const sel = document.getElementById('cross-activity');
+      if (sel) sel.value = '';
+      crossTrainingLoaded = false;
+      loadCrossTraining();
+    } else { toast('Could not save', 'err'); }
+  } catch (err) { toast('Error saving session', 'err'); }
+  if (btn) { btn.textContent = 'Log'; btn.disabled = false; }
 }
 
 // ══ MOBILE SHELL LOGIC ════════════════════════════════════════════

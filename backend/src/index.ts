@@ -569,6 +569,10 @@ export default {
       if (pathname === "/nutrition/today" && request.method === "GET")  return handleNutritionToday(request, env);
       if (pathname === "/nutrition/log"   && request.method === "POST") return handleNutritionLog(request, env);
 
+      // Cross-Training / Supabase
+      if (pathname === "/cross-training"     && request.method === "GET")  return handleCrossTraining(request, env);
+      if (pathname === "/cross-training/log" && request.method === "POST") return handleCrossTrainingLog(request, env);
+
       // Health check
       if (pathname === "/" || pathname === "/health") {
         return jsonResponse({
@@ -583,8 +587,10 @@ export default {
             "GET  /plan/completion":  "Today's completion status",
             "POST /plan/log":         "Log workout completion",
             "GET  /plan/all":         "All training plan rows",
-            "GET  /nutrition/today":  "Today's log + macro recommendation",
-            "POST /nutrition/log":    "Upsert today's nutrition log",
+            "GET  /nutrition/today":    "Today's log + macro recommendation",
+            "POST /nutrition/log":      "Upsert today's nutrition log",
+            "GET  /cross-training":     "Recent log + activity options",
+            "POST /cross-training/log": "Insert cross-training session",
           },
         }, 200, cors);
       }
