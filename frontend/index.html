@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 /* ─────────────────────────────────────────────
    CSS VARIABLES
@@ -1035,13 +1036,13 @@ h1, h2, h3, h4 {
 
     <nav class="sb-nav">
       <button class="d-nav-item active" id="dnb-today"     onclick="dSwitchTab('today')">
-        <span class="d-nav-icon">📅</span> Today
+        <span class="d-nav-icon"><i data-lucide="sun" width="16" height="16"></i></span> Today
       </button>
       <button class="d-nav-item"        id="dnb-plan"      onclick="dSwitchTab('plan')">
-        <span class="d-nav-icon">🗓</span> Plan
+        <span class="d-nav-icon"><i data-lucide="calendar" width="16" height="16"></i></span> Plan
       </button>
       <button class="d-nav-item"        id="dnb-readiness" onclick="dSwitchTab('readiness')">
-        <span class="d-nav-icon">📊</span> Readiness
+        <span class="d-nav-icon"><i data-lucide="activity" width="16" height="16"></i></span> Readiness
       </button>
     </nav>
 
@@ -1173,15 +1174,15 @@ h1, h2, h3, h4 {
 
   <nav id="m-bottom-nav">
     <button class="m-nav-btn m-nav-active" id="mnb-today"     onclick="mSwitchTab('today')">
-      <span class="m-nav-icon">📅</span>
+      <span class="m-nav-icon"><i data-lucide="sun" width="20" height="20"></i></span>
       <span class="m-nav-label">Today</span>
     </button>
     <button class="m-nav-btn" id="mnb-plan"      onclick="mSwitchTab('plan')">
-      <span class="m-nav-icon">🗓</span>
+      <span class="m-nav-icon"><i data-lucide="calendar" width="20" height="20"></i></span>
       <span class="m-nav-label">Plan</span>
     </button>
     <button class="m-nav-btn" id="mnb-readiness" onclick="mSwitchTab('readiness')">
-      <span class="m-nav-icon">📊</span>
+      <span class="m-nav-icon"><i data-lucide="activity" width="20" height="20"></i></span>
       <span class="m-nav-label">Readiness</span>
     </button>
   </nav>
@@ -1350,21 +1351,23 @@ function metersToMiles(m) {
 window.metersToMiles = metersToMiles;
 
 const ACTIVITY_ICONS = {
-  Run:            `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0M5.45 5.11L2 6v-2l5.32-1.45A2 2 0 0 1 9 3.96l.29.26c.28.25.6.46.94.61L15.5 7l3.5 3.5-1 1L14.5 8l-3.74-.37L9 10.77V13H7v-3.09c0-.77.37-1.49 1-1.95l2.96-2.05c-.43-.2-.83-.46-1.17-.78L9.45 5.8a2 2 0 0 0-4 .7z"/><path d="M9 21l2-5 3 2 3-8"/></svg>`,
-  TrailRun:       `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0M5.45 5.11L2 6v-2l5.32-1.45A2 2 0 0 1 9 3.96l.29.26c.28.25.6.46.94.61L15.5 7l3.5 3.5-1 1L14.5 8l-3.74-.37L9 10.77V13H7v-3.09c0-.77.37-1.49 1-1.95l2.96-2.05c-.43-.2-.83-.46-1.17-.78L9.45 5.8a2 2 0 0 0-4 .7z"/><path d="M9 21l2-5 3 2 3-8"/></svg>`,
-  Ride: '🚴', VirtualRide: '🚴', EBikeRide: '🚴', GravelRide: '🚴',
-  Swim: '🏊', Walk: '🚶', Hike: '🥾', WeightTraining: '🏋️', Workout: '💪',
-  Yoga: '🧘', Pilates: '🧘', Crossfit: '🏋️', Elliptical: '🏃', Rowing: '🚣',
-  StairStepper: '🪜', Soccer: '⚽', Tennis: '🎾', Basketball: '🏀', Golf: '⛳',
-  Ski: '⛷️', Snowboard: '🏂', Kayaking: '🚣', AlpineSki: '⛷️', NordicSki: '⛷️',
-  IceSkate: '⛸️', default: '🏃',
+  Run: 'PersonStanding', TrailRun: 'Mountain',
+  Ride: 'Bike', VirtualRide: 'Bike', EBikeRide: 'Bike', GravelRide: 'Bike',
+  Swim: 'Waves', Walk: 'Footprints', Hike: 'Mountain',
+  WeightTraining: 'Dumbbell', Workout: 'Dumbbell',
+  Yoga: 'Leaf', Pilates: 'Leaf', Crossfit: 'Dumbbell',
+  Elliptical: 'Timer', Rowing: 'Anchor',
+  StairStepper: 'ArrowUpFromLine', Soccer: 'CircleDot', Tennis: 'CircleDot',
+  Basketball: 'CircleDot', Golf: 'Flag',
+  Ski: 'Wind', Snowboard: 'Wind', AlpineSki: 'Wind', NordicSki: 'Wind',
+  Kayaking: 'Waves', IceSkate: 'Wind',
+  default: 'Activity',
 };
 window.ACTIVITY_ICONS = ACTIVITY_ICONS;
 
 function activityIcon(type) {
-  const icon = ACTIVITY_ICONS[type];
-  if (!icon) return ACTIVITY_ICONS.default;
-  return icon.startsWith('<') ? icon : `<span style="font-size:18px;line-height:1">${icon}</span>`;
+  const iconName = ACTIVITY_ICONS[type] || ACTIVITY_ICONS.default;
+  return `<i data-lucide="${iconName.toLowerCase().replace(/([A-Z])/g, m => '-' + m.toLowerCase()).replace(/^-/,'')}" width="18" height="18" style="display:inline-block;vertical-align:middle"></i>`;
 }
 window.activityIcon = activityIcon;
 
@@ -1449,14 +1452,21 @@ function computeCalibration(activities) {
 window.computeCalibration = computeCalibration;
 
 function predictedFinishTime(activities) {
-  const longRuns = activities.filter(a =>
+  // Use best-effort run: fastest avg pace among runs ≥ 5 miles
+  // This gives a more accurate Riegel prediction than just the longest run
+  const candidateRuns = activities.filter(a =>
     ['Run','TrailRun'].includes(a.type) &&
-    a.distance >= 8046 &&
+    a.distance >= 8046 &&   // ≥ 5 miles
     a.moving_time > 0
-  ).sort((a, b) => b.distance - a.distance);
-  if (!longRuns.length) return null;
-  const best = longRuns[0];
-  const distMi = best.distance / 1609.34;
+  ).map(a => {
+    const distMi = a.distance / 1609.34;
+    const paceSec = a.moving_time / distMi; // sec/mile
+    return { ...a, distMi, paceSec };
+  }).sort((a, b) => a.paceSec - b.paceSec); // fastest pace first
+
+  if (!candidateRuns.length) return null;
+  const best = candidateRuns[0]; // fastest-pace run
+  const distMi = best.distMi;
   const timeSec = best.moving_time;
   const MARATHON_MI = 26.2188;
   const predictedSec = timeSec * Math.pow(MARATHON_MI / distMi, 1.06);
@@ -1564,18 +1574,18 @@ async function fetchWeather() {
     const wCode = c.weather_code;
 
     function wmoInfo(code) {
-      if (code === 0) return { label:'Clear Sky', emoji:'☀️' };
-      if (code === 1) return { label:'Mainly Clear', emoji:'🌤️' };
-      if (code === 2) return { label:'Partly Cloudy', emoji:'⛅' };
-      if (code === 3) return { label:'Overcast', emoji:'☁️' };
-      if ([45,48].includes(code)) return { label:'Foggy', emoji:'🌫️' };
-      if ([51,53,55].includes(code)) return { label:'Drizzle', emoji:'🌦️' };
-      if ([61,63,65].includes(code)) return { label:'Rain', emoji:'🌧️' };
-      if ([71,73,75,77].includes(code)) return { label:'Snow', emoji:'❄️' };
-      if ([80,81,82].includes(code)) return { label:'Rain Showers', emoji:'🌧️' };
-      if ([85,86].includes(code)) return { label:'Snow Showers', emoji:'🌨️' };
-      if ([95,96,99].includes(code)) return { label:'Thunderstorm', emoji:'⛈️' };
-      return { label:'Mixed', emoji:'🌡️' };
+      if (code === 0) return { label:'Clear Sky', icon:'sun' };
+      if (code === 1) return { label:'Mainly Clear', icon:'cloud-sun' };
+      if (code === 2) return { label:'Partly Cloudy', icon:'cloud-sun' };
+      if (code === 3) return { label:'Overcast', icon:'cloud' };
+      if ([45,48].includes(code)) return { label:'Foggy', icon:'cloud-fog' };
+      if ([51,53,55].includes(code)) return { label:'Drizzle', icon:'cloud-drizzle' };
+      if ([61,63,65].includes(code)) return { label:'Rain', icon:'cloud-rain' };
+      if ([71,73,75,77].includes(code)) return { label:'Snow', icon:'snowflake' };
+      if ([80,81,82].includes(code)) return { label:'Rain Showers', icon:'cloud-rain' };
+      if ([85,86].includes(code)) return { label:'Snow Showers', icon:'snowflake' };
+      if ([95,96,99].includes(code)) return { label:'Thunderstorm', icon:'cloud-lightning' };
+      return { label:'Mixed', icon:'thermometer' };
     }
     function runRating(temp, humidity, wind, code) {
       let s = 0;
@@ -1592,12 +1602,13 @@ async function fetchWeather() {
       return { label:'Stay Inside', cls:'wx-inside' };
     }
 
-    const { label, emoji } = wmoInfo(wCode);
+    const { label, icon } = wmoInfo(wCode);
     const { label: rating, cls } = runRating(temp, humidity, wind, wCode);
 
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     const setCls = (id, cn) => { const el = document.getElementById(id); if (el) el.className = cn; };
-    set('sb-wx-icon', emoji);
+    const wxIconEl = document.getElementById('sb-wx-icon');
+    if (wxIconEl) { wxIconEl.innerHTML = `<i data-lucide="${icon}" width="20" height="20"></i>`; if (window.lucide) lucide.createIcons({nodes: [wxIconEl]}); }
     set('sb-wx-temp', temp);
     set('sb-wx-cond', label);
     set('sb-wx-hum', humidity + '%');
@@ -1866,7 +1877,7 @@ function buildWorkoutCardHTML(plan, completion, isMobile) {
   if (guidance.effort) {
     effortSection = `<div class="effort-text">${guidance.effort}</div>`;
     if (guidance.rpe) {
-      effortSection += `<div style="margin-top:6px;font-size:12px;color:var(--muted)">RPE: <strong>${guidance.rpe}</strong></div>`;
+      effortSection += `<div style="margin-top:6px;font-size:12px;color:var(--muted)">Effort Level: <strong>${guidance.rpe}/10</strong></div>`;
     }
   }
 
@@ -1974,6 +1985,7 @@ function renderToday() {
     if (actCard) actCard.style.display = '';
     if (actInner) actInner.innerHTML = buildActivityCardHTML(state.activities[0]);
   }
+  if (window.lucide) lucide.createIcons();
 }
 window.renderToday = renderToday;
 
@@ -2069,7 +2081,7 @@ function renderPlanInto(container, isMobile) {
           <div class="plan-detail-paces">
             ${paceRange ? `<div class="plan-detail-pace-item"><span class="plan-detail-pace-label">Target pace:</span><span class="plan-detail-pace-val">${paceRange}</span></div>` : ''}
             ${guidance.warmup ? `<div class="plan-detail-pace-item"><span class="plan-detail-pace-label">Warmup:</span><span class="plan-detail-pace-val" style="font-family:inherit;font-size:12px;color:var(--charcoal)">${guidance.warmup}</span></div>` : ''}
-            ${guidance.rpe ? `<div class="plan-detail-pace-item"><span class="plan-detail-pace-label">RPE:</span><span class="plan-detail-pace-val">${guidance.rpe}</span></div>` : ''}
+            ${guidance.rpe ? `<div class="plan-detail-pace-item"><span class="plan-detail-pace-label">Effort Level:</span><span class="plan-detail-pace-val">${guidance.rpe}/10</span></div>` : ''}
           </div>
         </div>
       `;
@@ -2079,6 +2091,7 @@ function renderPlanInto(container, isMobile) {
   });
 
   container.innerHTML = html;
+  if (window.lucide) lucide.createIcons();
 }
 window.renderPlanInto = renderPlanInto;
 
@@ -2127,7 +2140,7 @@ function renderReadinessInto(container, isMobile) {
     const gapLabel = fitnessGapLabel(predicted.predictedSec);
     predictedHTML = `
       <div class="predicted-time">${secsToHMSFull(Math.round(predicted.predictedSec))}</div>
-      <div class="predicted-goal">Goal: ${secsToHMSFull(GOAL_SEC)} (3:45:00)</div>
+      <div class="predicted-goal">Goal: 3:45:00</div>
       <div class="predicted-gap">${gapLabel}</div>
       <div class="progress-track">
         <div class="progress-fill" style="width:${pct}%"></div>
@@ -2256,6 +2269,33 @@ function renderReadinessInto(container, isMobile) {
       </div>
     </div>
 
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-label">Shoe Mileage</div>
+      ${(function() {
+        const totalMiles = activities
+          .filter(a => ['Run','TrailRun','Walk'].includes(a.type))
+          .reduce((s, a) => s + (a.distance || 0) / 1609.34, 0);
+        const SHOE_LIMIT = 500;
+        const pct = Math.min(100, Math.round((totalMiles / SHOE_LIMIT) * 100));
+        const remaining = Math.max(0, SHOE_LIMIT - totalMiles);
+        const statusColor = pct >= 80 ? 'var(--danger)' : pct >= 60 ? 'var(--amber)' : 'var(--lime)';
+        const statusMsg = pct >= 100 ? 'Replace your shoes!' : pct >= 80 ? 'Getting close — plan for new shoes soon' : 'Shoes in good shape';
+        return `
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+            <span style="font-size:28px;font-weight:700">${totalMiles.toFixed(0)} <span style="font-size:14px;font-weight:400;color:var(--muted)">mi tracked</span></span>
+            <span style="font-size:13px;color:var(--muted)">${remaining.toFixed(0)} mi left</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width:${pct}%;background:${statusColor}"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--muted)">
+            <span>${statusMsg}</span>
+            <span>${pct}% of ${SHOE_LIMIT} mi</span>
+          </div>
+        `;
+      })()}
+    </div>
+
     <div class="card">
       <div class="section-label">Your Training Paces</div>
       <table class="paces-table">
@@ -2271,6 +2311,8 @@ function renderReadinessInto(container, isMobile) {
 
   // Render charts after DOM is settled
   setTimeout(() => renderCharts(weeklyData, chartSuffix), 100);
+  // Activate Lucide icons
+  if (window.lucide) lucide.createIcons();
 }
 window.renderReadinessInto = renderReadinessInto;
 
@@ -2481,6 +2523,8 @@ function mRenderToday() {
 
   // Sync countdown values now that DOM is ready
   dSyncCountdown();
+  // Activate Lucide icons in rendered HTML
+  if (window.lucide) lucide.createIcons();
 }
 window.mRenderToday = mRenderToday;
 
@@ -2515,6 +2559,9 @@ async function init() {
   mRenderToday();
   dSyncCountdown();
   setInterval(dSyncCountdown, 60000);
+
+  // Activate any static Lucide icons (nav, etc.)
+  if (window.lucide) lucide.createIcons();
 
   // Handle OAuth redirect
   if (new URLSearchParams(window.location.search).get('connected') === '1') {
