@@ -16,9 +16,13 @@ This file is auto-loaded when the folder is connected — start here before doin
 3. **Database** — Supabase project **"Tyler MCM Dashboard"** (id `pcbcuawqfdhtzzlqvatb`), Postgres.
 
 ## Deploy flow (IMPORTANT — nothing is live until you do this)
-- **Frontend:** double-click `push-dashboard.command` (git add frontend/index.html → commit → push).
-  Cloudflare Pages picks it up automatically. (Editing the file alone does NOT deploy it.)
-- **Worker:** double-click `deploy-worker.command` (runs `npx wrangler deploy` from `backend/`).
+- **Frontend (PREFERRED — Tyler's standing choice): use GitHub Desktop.** After editing
+  `frontend/index.html`, open the `mcm-dashboard` repo in GitHub Desktop, write a summary,
+  click "Commit to main", then "Push origin". Cloudflare Pages auto-deploys on push.
+  GitHub Desktop stays signed in, so no token prompts. ALWAYS deploy this way — do NOT use the
+  Terminal/`push-dashboard.command` route (it prompts for GitHub credentials, which Claude cannot enter).
+  Claude can stage the commit and drive GitHub Desktop up to the final "Push origin" click.
+- **Worker:** `deploy-worker.command` runs `npx wrangler deploy` from `backend/` (only when backend changes).
   `git push` alone does NOT deploy the Worker.
 - **Database:** Supabase migrations apply immediately via the Supabase MCP — no deploy step.
 
