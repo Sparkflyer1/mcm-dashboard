@@ -42,16 +42,11 @@ const STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token";
 const STRAVA_API_BASE  = "https://www.strava.com/api/v3";
 const REFRESH_BUFFER_MS = 5 * 60 * 1000;
 const DEFAULT_SCOPE = "read,activity:read_all,profile:read_all";
+const ANON_USER_ID  = "00000000-0000-0000-0000-000000000001";
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 function corsHeaders(env: Env, origin: string | null): Record<string, string> {
-  const allowed = [
-    env.ALLOWED_ORIGIN,
-    "http://localhost:3000",
-    "http://localhost:8080",
-    "http://127.0.0.1:5500",
-  ];
-  const allowedOrigin = (origin && allowed.includes(origin)) ? origin : env.ALLOWED_ORIGIN;
+  const allowedOrigin = (origin === env.ALLOWED_ORIGIN) ? origin : env.ALLOWED_ORIGIN;
   return {
     "Access-Control-Allow-Origin":      allowedOrigin,
     "Access-Control-Allow-Methods":     "GET, POST, PUT, DELETE, PATCH, OPTIONS",
@@ -61,7 +56,7 @@ function corsHeaders(env: Env, origin: string | null): Record<string, string> {
 }
 
 function jsonResponse(body: unknown, status = 200, cors: Record<string, string> = {}): Response {
-  return new Response(JSON.stringify(body, null, 2), {
+  return new Response(JSON.stringify(body), {
     status,
     headers: { "Content-Type": "application/json", ...cors },
   });
@@ -262,15 +257,22 @@ async function handlePlanWeek(request: Request, env: Env): Promise<Response> {
 async function handlePlanCompletion(request: Request, env: Env): Promise<Response> {
   const cors  = corsHeaders(env, request.headers.get("Origin"));
   const today = toLocalDateStr(new Date());
-  // Join plan_completions with training_plan to get today's record
-  const resp  = await supabase(
+
+  // Step 1: get today's plan row to obtain its id
+  const planResp = await supabase(env, `training_plan?workout_date=eq.${today}&select=id`);
+  if (!planResp.ok) return jsonResponse({ error: "Supabase error" }, 502, cors);
+  const planRows = (await planResp.json()) as { id: number }[];
+  if (!planRows.length) return jsonResponse(null, 200, cors);
+  const planId = planRows[0].id;
+
+  // Step 2: get most recent completion for that plan row
+  const compResp = await supabase(
     env,
-    `plan_completions?select=*,training_plan!plan_id(workout_date)` +
-    `&training_plan.workout_date=eq.${today}&order=created_at.desc&limit=1`
+    `plan_completions?plan_id=eq.${planId}&order=created_at.desc&limit=1`
   );
-  if (!resp.ok) return jsonResponse({ error: "Supabase error" }, 502, cors);
-  const rows = await resp.json() as unknown[];
-  return jsonResponse(rows[0] ?? null, 200, cors);
+  if (!compResp.ok) return jsonResponse({ error: "Supabase error" }, 502, cors);
+  const compRows = (await compResp.json()) as unknown[];
+  return jsonResponse(compRows[0] ?? null, 200, cors);
 }
 
 /** POST /plan/log — log a workout completion */
@@ -317,19 +319,229 @@ async function handlePlanLog(request: Request, env: Env): Promise<Response> {
     }
   }
 
-  // Always write a plan_completion record
+  // Always write a plan_completion record (upsert to prevent duplicates)
   if (plan_id) {
-    await supabase(env, "plan_completions", "POST", {
-      user_id:        ANON_USER_ID,
-      plan_id,
-      workout_log_id: workoutLogId,
+    const upsertUrl = `${env.SUPABASE_URL}/rest/v1/plan_completions?on_conflict=user_id,plan_id`;
+    await fetch(upsertUrl, {
+      method: "POST",
+      headers: {
+        "apikey":        env.SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`,
+        "Content-Type":  "application/json",
+        "Prefer":        "resolution=merge-duplicates,return=representation",
+      },
+      body: JSON.stringify({
+        user_id:        ANON_USER_ID,
+        plan_id,
+        workout_log_id: workoutLogId,
+      }),
     });
   }
 
   return jsonResponse({ success: true, status, date: today, workout_log_id: workoutLogId }, 200, cors);
 }
 
-const ANON_USER_ID = "00000000-0000-0000-0000-000000000001";
+// Activity types to sync from Strava
+const SYNC_ACTIVITY_TYPES = new Set(["Run", "TrailRun", "Walk", "Hike", "Ride"]);
+
+/** GET /strava/sync — fetch Strava activities and upsert into Supabase */
+async function handleStravaSync(request: Request, env: Env): Promise<Response> {
+  const cors = corsHeaders(env, request.headers.get("Origin"));
+  let accessToken: string;
+  try {
+    accessToken = await getValidAccessToken(env);
+  } catch (err) {
+    return jsonResponse({ error: (err as Error).message }, 401, cors);
+  }
+
+  // Delta sync: only fetch activities newer than last sync
+  const lastSyncedAt = await env.STRAVA_KV.get("last_synced_at");
+  const afterParam = lastSyncedAt ? `&after=${lastSyncedAt}` : "";
+
+  // Fetch up to 2 pages of activities from Strava
+  const allActivities: Record<string, unknown>[] = [];
+  for (let page = 1; page <= 2; page++) {
+    const resp = await fetch(
+      `${STRAVA_API_BASE}/athlete/activities?per_page=100&page=${page}${afterParam}`,
+      { headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" } }
+    );
+    if (!resp.ok) {
+      if (page === 1) {
+        return jsonResponse({ error: `Strava API error (${resp.status})`, detail: await resp.text() }, 502, cors);
+      }
+      break;
+    }
+    const activities = (await resp.json()) as Record<string, unknown>[];
+    if (!activities.length) break;
+    allActivities.push(...activities);
+    if (activities.length < 100) break;
+  }
+
+  // Filter to supported activity types
+  const filtered = allActivities.filter(a => SYNC_ACTIVITY_TYPES.has(a.type as string));
+
+  if (!filtered.length) {
+    return jsonResponse({ synced: 0, total: allActivities.length }, 200, cors);
+  }
+
+  // Build upsert rows
+  const rows = filtered.map(a => ({
+    strava_id:         a.id,
+    user_id:           ANON_USER_ID,
+    activity_type:     a.type,
+    name:              a.name,
+    distance:          a.distance,
+    moving_time:       a.moving_time,
+    elapsed_time:      a.elapsed_time,
+    average_heartrate: a.average_heartrate ?? null,
+    max_heartrate:     a.max_heartrate ?? null,
+    average_speed:     a.average_speed ?? null,
+    suffer_score:      a.suffer_score ?? null,
+    start_date_local:  a.start_date_local,
+    gear_id:           a.gear_id ?? null,
+    updated_at:        new Date().toISOString(),
+  }));
+
+  // Upsert via Supabase REST — merge on strava_id
+  const upsertUrl = `${env.SUPABASE_URL}/rest/v1/strava_activities?on_conflict=strava_id`;
+  const upsertResp = await fetch(upsertUrl, {
+    method: "POST",
+    headers: {
+      "apikey":        env.SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${env.SUPABASE_ANON_KEY}`,
+      "Content-Type":  "application/json",
+      "Prefer":        "resolution=merge-duplicates",
+    },
+    body: JSON.stringify(rows),
+  });
+
+  if (!upsertResp.ok) {
+    const detail = await upsertResp.text();
+    return jsonResponse({ error: "Supabase upsert failed", detail }, 502, cors);
+  }
+
+  // Record sync timestamp for delta fetches next time
+  await env.STRAVA_KV.put("last_synced_at", String(Math.floor(Date.now() / 1000)));
+
+  return jsonResponse({ synced: rows.length, total: allActivities.length }, 200, cors);
+}
+
+/** GET /activities/list — recent activities from strava_activities in Supabase */
+async function handleActivitiesList(request: Request, env: Env): Promise<Response> {
+  const cors = corsHeaders(env, request.headers.get("Origin"));
+  const resp = await supabase(
+    env,
+    `strava_activities?user_id=eq.${ANON_USER_ID}&select=strava_id,activity_type,name,distance,moving_time,average_heartrate,start_date_local,gear_id&order=start_date_local.desc&limit=50`
+  );
+  if (!resp.ok) return jsonResponse({ error: "Supabase error" }, 502, cors);
+  const rows = await resp.json();
+  return jsonResponse(rows, 200, cors);
+}
+
+/** GET /activities/summary — computed stats from strava_activities in Supabase */
+async function handleActivitiesSummary(request: Request, env: Env): Promise<Response> {
+  const cors = corsHeaders(env, request.headers.get("Origin"));
+
+  // Fetch all Run/TrailRun activities
+  const resp = await supabase(
+    env,
+    `strava_activities?user_id=eq.${ANON_USER_ID}&activity_type=in.(Run,TrailRun)&select=distance,moving_time,average_speed,start_date_local&order=start_date_local.desc`
+  );
+  if (!resp.ok) return jsonResponse({ error: "Supabase error" }, 502, cors);
+
+  interface ActivityRow {
+    distance: number;
+    moving_time: number;
+    average_speed: number | null;
+    start_date_local: string;
+  }
+  const activities = (await resp.json()) as ActivityRow[];
+
+  const METERS_PER_MILE = 1609.34;
+  const now = new Date();
+
+  // Week bounds (Monday of current week)
+  const { mon } = weekBounds();
+  const monDate = new Date(mon + "T00:00:00");
+
+  // All-time stats
+  let allTimeMiles = 0;
+  let allTimeRuns  = 0;
+  let longestRunMi = 0;
+
+  // This week
+  let thisWeekMiles = 0;
+  let thisWeekRuns  = 0;
+
+  // 30-day pace
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  let pace30dTotalSec  = 0;
+  let pace30dCount     = 0;
+
+  // Streak: collect weeks with runs
+  const weekMilesMap: Map<string, number> = new Map();
+
+  for (const act of activities) {
+    const distMi = act.distance / METERS_PER_MILE;
+    const actDate = new Date(act.start_date_local);
+
+    allTimeMiles += distMi;
+    allTimeRuns++;
+    if (distMi > longestRunMi) longestRunMi = distMi;
+
+    if (actDate >= monDate) {
+      thisWeekMiles += distMi;
+      thisWeekRuns++;
+    }
+
+    if (actDate >= thirtyDaysAgo && act.moving_time > 0 && distMi > 0) {
+      const secPerMile = act.moving_time / distMi;
+      pace30dTotalSec += secPerMile;
+      pace30dCount++;
+    }
+
+    // Compute ISO-ish week key (Monday of that week)
+    const d = new Date(actDate);
+    const dow = d.getDay(); // 0=Sun
+    const diffToMon = dow === 0 ? -6 : 1 - dow;
+    d.setDate(d.getDate() + diffToMon);
+    const weekKey = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    weekMilesMap.set(weekKey, (weekMilesMap.get(weekKey) ?? 0) + distMi);
+  }
+
+  // Best week
+  let bestWeekMi = 0;
+  for (const mi of weekMilesMap.values()) {
+    if (mi > bestWeekMi) bestWeekMi = mi;
+  }
+
+  // Streak: consecutive non-zero weeks going back from current week
+  let streak = 0;
+  const checkDate = new Date(monDate);
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const key = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,"0")}-${String(checkDate.getDate()).padStart(2,"0")}`;
+    if ((weekMilesMap.get(key) ?? 0) > 0) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 7);
+    } else {
+      break;
+    }
+  }
+
+  const round2 = (n: number) => Math.round(n * 100) / 100;
+
+  return jsonResponse({
+    thisWeekMiles:  round2(thisWeekMiles),
+    thisWeekRuns,
+    allTimeMiles:   round2(allTimeMiles),
+    allTimeRuns,
+    streak,
+    avgPace30dSec:  pace30dCount > 0 ? Math.round(pace30dTotalSec / pace30dCount) : 0,
+    longestRunMi:   round2(longestRunMi),
+    bestWeekMi:     round2(bestWeekMi),
+  }, 200, cors);
+}
 
 /** GET /plan/all — all training_plan rows ordered by workout_date ASC */
 async function handlePlanAll(request: Request, env: Env): Promise<Response> {
@@ -342,6 +554,12 @@ async function handlePlanAll(request: Request, env: Env): Promise<Response> {
 
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 export default {
+  async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
+    // Auto-sync Strava every 6 hours via cron trigger
+    const req = new Request("https://internal/strava/sync");
+    await handleStravaSync(req, env);
+  },
+
   async fetch(request: Request, env: Env): Promise<Response> {
     const origin = request.headers.get("Origin");
     const cors   = corsHeaders(env, origin);
@@ -357,6 +575,10 @@ export default {
       // Strava OAuth
       if (pathname === "/auth" || pathname === "/strava/auth") return handleAuth(request, env);
       if (pathname === "/callback")                             return handleCallback(request, env);
+
+      // Strava-specific routes (before generic proxy)
+      if (pathname === "/strava/sync" && request.method === "GET") return handleStravaSync(request, env);
+
       if (pathname.startsWith("/strava"))                      return handleStravaProxy(request, env);
 
       // Plan / Supabase
@@ -365,6 +587,10 @@ export default {
       if (pathname === "/plan/completion" && request.method === "GET")  return handlePlanCompletion(request, env);
       if (pathname === "/plan/log"        && request.method === "POST") return handlePlanLog(request, env);
       if (pathname === "/plan/all"        && request.method === "GET")  return handlePlanAll(request, env);
+
+      // Activities
+      if (pathname === "/activities/list"    && request.method === "GET") return handleActivitiesList(request, env);
+      if (pathname === "/activities/summary" && request.method === "GET") return handleActivitiesSummary(request, env);
 
       // Health check
       if (pathname === "/" || pathname === "/health") {
@@ -379,7 +605,10 @@ export default {
             "GET  /plan/week":        "This week's Supabase workouts",
             "GET  /plan/completion":  "Today's completion status",
             "POST /plan/log":         "Log workout completion",
-            "GET  /plan/all":         "All training plan rows",
+            "GET  /plan/all":            "All training plan rows",
+            "GET  /strava/sync":         "Sync Strava activities to Supabase",
+            "GET  /activities/list":     "Recent activities from Supabase",
+            "GET  /activities/summary":  "Computed activity stats from Supabase",
           },
         }, 200, cors);
       }

@@ -13,6 +13,10 @@ SUPABASE_URL = "https://pcbcuawqfdhtzzlqvatb.supabase.co"
 SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjYmN1YXdxZmRodHp6bHF2YXRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTY2MDksImV4cCI6MjA5NDYzMjYwOX0.DhhVDWEhzLDk-FFwoYkW7chciRtR3lu7tIFrj-zt48g"
 ALLOWED_ORIGIN = "https://mcm.tyleresterly.com"
 
+# ── Cron triggers ─────────────────────────────────────────────────────────────
+[triggers]
+crons = ["0 */6 * * *"]
+
 # ── KV namespace binding ───────────────────────────────────────────────────────
 # Replace <KV_NAMESPACE_ID> with the actual ID shown after `wrangler kv namespace create`
 # or use the ID created for you: e4f95c0b2677460baba8496b95b6b78f
