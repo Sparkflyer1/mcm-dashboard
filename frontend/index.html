@@ -1751,7 +1751,8 @@ async function loadTodayWorkout() {
     const res2 = await fetch(`${API}/plan/completion`);
     if (res2.ok) {
       const comp = await res2.json();
-      state.todayCompletion = (comp && comp.id) ? comp : null;
+      // plan_completions has no status column; any completion row means done.
+      state.todayCompletion = (comp && comp.id) ? { ...comp, status: 'done' } : null;
     }
   } catch(e) {}
 }
@@ -1965,10 +1966,7 @@ function buildWorkoutCardHTML(plan, completion, isMobile) {
   const actionButtons = isRestType ? '' : `
     <div class="workout-actions">
       <button class="btn btn-complete ${doneActive}" id="${isMobile ? 'm-' : 'd-'}btn-complete" onclick="logWorkout('done')">
-        ✅ Mark Complete
-      </button>
-      <button class="btn btn-ghost btn-skip ${skipActive}" id="${isMobile ? 'm-' : 'd-'}btn-skip" onclick="confirmSkip()">
-        ⏭ Skip
+        ${doneActive ? '✓ Completed' : '✅ Mark Complete'}
       </button>
     </div>
   `;
@@ -2901,9 +2899,15 @@ function autoCompleteFromStrava() {
     try { if (localStorage.getItem(guardKey)) return; } catch (e) {}
     // Only running activities auto-complete a planned run (a Walk/Hike shouldn't
     // mark a tempo or long run as done).
+    const plannedMiles = Number(state.todayPlan.distance_miles) || 0;
     const match = (state.activities || []).find(a => {
+      if (!['Run','TrailRun'].includes(a.activity_type)) return false;
       const ds = new Date(a.start_date_local).toLocaleDateString('en-CA');
-      return ds === todayStr && ['Run','TrailRun'].includes(a.activity_type);
+      if (ds !== todayStr) return false;
+      const miles = a.distance ? a.distance / 1609.34 : 0;
+      // Counts only if it covers at least 85% of the planned distance
+      // (or any run if the plan has no set distance).
+      return plannedMiles <= 0 || miles >= plannedMiles * 0.85;
     });
     if (!match) return;
     try { localStorage.setItem(guardKey, '1'); } catch (e) {}
