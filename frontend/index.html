@@ -1013,6 +1013,80 @@ h1, h2, h3, h4 {
 </style>
 </head>
 <body>
+<!-- ════════════════════════════════════════════
+     PIN LOCK (simple privacy gate — single user)
+════════════════════════════════════════════ -->
+<style>
+#pin-lock{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;
+  background:var(--charcoal,#1A1A1A);font-family:'League Spartan',-apple-system,sans-serif;}
+#pin-lock.pin-hidden{display:none;}
+.pin-box{width:300px;max-width:88vw;text-align:center;color:#fff;}
+.pin-title{font-size:20px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;}
+.pin-sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:6px;margin-bottom:22px;}
+.pin-dots{display:flex;gap:14px;justify-content:center;margin-bottom:26px;height:16px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--lime,#C5F82A);transition:background .15s;}
+.pin-dot.on{background:var(--lime,#C5F82A);}
+#pin-lock.pin-err .pin-dot{border-color:#FF5247;animation:pinshake .4s;}
+@keyframes pinshake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.pin-key{aspect-ratio:1;border:none;border-radius:14px;background:rgba(255,255,255,.08);color:#fff;
+  font-size:24px;font-weight:700;cursor:pointer;transition:background .12s;font-family:inherit;}
+.pin-key:hover{background:rgba(197,248,42,.18);}
+.pin-key:active{background:var(--lime,#C5F82A);color:var(--charcoal,#1A1A1A);}
+.pin-key.pin-blank{background:none;cursor:default;}
+.pin-key.pin-blank:hover{background:none;}
+</style>
+<div id="pin-lock">
+  <div class="pin-box">
+    <div class="pin-title">MCM 2026</div>
+    <div class="pin-sub">Enter your PIN to continue</div>
+    <div class="pin-dots">
+      <div class="pin-dot" data-i="0"></div><div class="pin-dot" data-i="1"></div>
+      <div class="pin-dot" data-i="2"></div><div class="pin-dot" data-i="3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-key" data-d="1">1</button>
+      <button class="pin-key" data-d="2">2</button>
+      <button class="pin-key" data-d="3">3</button>
+      <button class="pin-key" data-d="4">4</button>
+      <button class="pin-key" data-d="5">5</button>
+      <button class="pin-key" data-d="6">6</button>
+      <button class="pin-key" data-d="7">7</button>
+      <button class="pin-key" data-d="8">8</button>
+      <button class="pin-key" data-d="9">9</button>
+      <button class="pin-key pin-blank"></button>
+      <button class="pin-key" data-d="0">0</button>
+      <button class="pin-key" data-del="1">&#9003;</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var LOCK=document.getElementById('pin-lock');
+  var EXPECTED='NDQ2OA==';            // btoa('4468') — light obfuscation, not real security
+  var REMEMBER_MS=30*24*60*60*1000;   // 30 days
+  var KEY='mcm_pin_until';
+  // Already unlocked & still valid? skip the gate.
+  try{ var until=parseInt(localStorage.getItem(KEY)||'0',10); if(until>Date.now()){ LOCK.classList.add('pin-hidden'); return; } }catch(e){}
+  var buf='';
+  var dots=LOCK.querySelectorAll('.pin-dot');
+  function draw(){ for(var i=0;i<4;i++){ dots[i].classList.toggle('on', i<buf.length); } }
+  function unlock(){ try{ localStorage.setItem(KEY, String(Date.now()+REMEMBER_MS)); }catch(e){} LOCK.classList.add('pin-hidden'); }
+  function fail(){ LOCK.classList.add('pin-err'); setTimeout(function(){ LOCK.classList.remove('pin-err'); buf=''; draw(); },420); }
+  function push(d){ if(buf.length>=4) return; buf+=d; draw();
+    if(buf.length===4){ setTimeout(function(){ try{ if(btoa(buf)===EXPECTED) unlock(); else fail(); }catch(e){ fail(); } },120); } }
+  function del(){ buf=buf.slice(0,-1); draw(); }
+  LOCK.querySelectorAll('.pin-key').forEach(function(b){
+    b.addEventListener('click',function(){ if(b.dataset.d!=null) push(b.dataset.d); else if(b.dataset.del) del(); });
+  });
+  document.addEventListener('keydown',function(e){
+    if(LOCK.classList.contains('pin-hidden')) return;
+    if(e.key>='0'&&e.key<='9') push(e.key);
+    else if(e.key==='Backspace'){ del(); e.preventDefault(); }
+  });
+  draw();
+})();
+</script>
 
 <!-- ════════════════════════════════════════════
      DESKTOP SHELL
@@ -1094,10 +1168,14 @@ h1, h2, h3, h4 {
         <div class="countdown-meta">
           <div class="countdown-meta-item">
             <span class="countdown-meta-val" id="d-week-num">—</span>
-            <span class="countdown-meta-key">of 21 Weeks</span>
+            <span class="countdown-meta-key" id="d-week-total">of 21 Weeks</span>
           </div>
           <div class="countdown-meta-item">
-            <span class="countdown-meta-val">Oct 27</span>
+            <span class="countdown-meta-val" id="d-hal-val">—</span>
+            <span class="countdown-meta-key" id="d-hal-key">to Hal Higdon</span>
+          </div>
+          <div class="countdown-meta-item">
+            <span class="countdown-meta-val">Oct 26</span>
             <span class="countdown-meta-key">Race Day</span>
           </div>
         </div>
@@ -1238,6 +1316,8 @@ window.RACE_DATE = RACE_DATE;
 
 const PLAN_START = new Date('2026-06-01T00:00:00-04:00');
 window.PLAN_START = PLAN_START;
+const HAL_START = new Date('2026-06-22T00:00:00-04:00'); // Hal Higdon 18-week plan begins
+window.HAL_START = HAL_START;
 
 const GOAL_SEC = 13500; // 3:45:00 in seconds
 window.GOAL_SEC = GOAL_SEC;
@@ -1841,25 +1921,32 @@ function dSyncCountdown() {
   const mDays = document.getElementById('m-days-num');
   if (mDays) mDays.textContent = daysLeft;
 
-  // Week number
+  // Week number — renumber so the plan starts at Week 1 (no negative/zero weeks).
+  // Total is computed from the plan data, so the final week is always race week.
+  const wks = (state.fullPlan || []).map(p => p.week_number).filter(n => n != null);
+  const minW = wks.length ? Math.min(...wks) : -2;
+  const maxW = wks.length ? Math.max(...wks) : 18;
+  const totalWeeks = maxW - minW + 1;   // distinct plan weeks → lands on race day
+  const offset = 1 - minW;              // shift earliest week to 1
+
   const PLAN_TOTAL_DAYS = Math.ceil((RACE_DATE - PLAN_START) / 86400000);
   let weekNum = null;
   let pct = 0;
   if (now >= PLAN_START && now <= RACE_DATE) {
     const elapsed = Math.floor((now - PLAN_START) / 86400000);
-    weekNum = Math.min(21, Math.ceil(elapsed / 7) || 1);
+    weekNum = Math.min(totalWeeks, Math.ceil((elapsed + 1) / 7) || 1);
     pct = Math.min(100, Math.round((elapsed / PLAN_TOTAL_DAYS) * 100));
   } else if (now > RACE_DATE) {
-    weekNum = 21; pct = 100;
+    weekNum = totalWeeks; pct = 100;
   }
 
-  // Use plan data week number if available
-  if (state.todayPlan && state.todayPlan.week_number) {
-    weekNum = state.todayPlan.week_number;
+  // Prefer the plan's own week number, offset so it starts at 1
+  if (state.todayPlan && state.todayPlan.week_number != null) {
+    weekNum = state.todayPlan.week_number + offset;
   }
 
   const sbWeek = document.getElementById('sb-week');
-  if (sbWeek) sbWeek.textContent = weekNum ? `Wk ${weekNum} of 21` : 'Pre-Training';
+  if (sbWeek) sbWeek.textContent = weekNum ? `Wk ${weekNum} of ${totalWeeks}` : 'Pre-Training';
 
   const fill = document.getElementById('sb-progress-fill');
   const pctLbl = document.getElementById('sb-pct-label');
@@ -1868,9 +1955,30 @@ function dSyncCountdown() {
 
   const dWeek = document.getElementById('d-week-num');
   if (dWeek) dWeek.textContent = weekNum || '—';
-
   const mWeek = document.getElementById('m-week-num');
   if (mWeek) mWeek.textContent = weekNum || '—';
+
+  const totalLblD = document.getElementById('d-week-total');
+  if (totalLblD) totalLblD.textContent = `of ${totalWeeks} Weeks`;
+  const totalLblM = document.getElementById('m-week-total');
+  if (totalLblM) totalLblM.textContent = `of ${totalWeeks} Weeks`;
+
+  // Hal Higdon kickoff tag
+  let halVal = '—', halKey = 'to Hal Higdon';
+  if (now < HAL_START) {
+    const d = Math.max(0, Math.ceil((HAL_START - now) / 86400000));
+    halVal = String(d); halKey = (d === 1 ? 'day to Hal Higdon' : 'days to Hal Higdon');
+  } else if (now <= RACE_DATE) {
+    halVal = 'Active'; halKey = 'Hal Higdon plan';
+  } else {
+    halVal = 'Done'; halKey = 'Hal Higdon plan';
+  }
+  ['d','m'].forEach(pfx => {
+    const v = document.getElementById(pfx + '-hal-val');
+    const k = document.getElementById(pfx + '-hal-key');
+    if (v) v.textContent = halVal;
+    if (k) k.textContent = halKey;
+  });
 }
 window.dSyncCountdown = dSyncCountdown;
 </script>
@@ -2288,7 +2396,7 @@ function renderPlanInto(container, isMobile) {
   Object.keys(byWeek).sort((a,b)=>Number(a)-Number(b)).forEach(wk => {
     const days = byWeek[wk].sort((a,b) => a.workout_date.localeCompare(b.workout_date));
     const wkNum = Number(wk);
-    const wkLabel = wkNum <= 0 ? `Base ${Math.abs(wkNum) || '0'}` : `Week ${wkNum}`;
+    const wkLabel = wkNum <= 0 ? `Base Week ${wkNum + 3}` : `Week ${wkNum}`;
     const isCurrentWeek = wkNum === currentWeek;
     const expandedCls = isCurrentWeek ? 'expanded' : '';
     const firstDate = days[0]?.workout_date || '';
@@ -2298,7 +2406,7 @@ function renderPlanInto(container, isMobile) {
     html += `<div class="plan-week-block ${expandedCls}" id="pw-${wk}">
       <div class="plan-week-header" onclick="togglePlanWeek('pw-${wk}')">
         <div>
-          <div class="plan-week-title">${wkLabel}${isCurrentWeek ? ' <span style="color:var(--lime-dark);font-size:11px;font-weight:700;margin-left:6px">CURRENT</span>' : ''}</div>
+          <div class="plan-week-title">${wkLabel}${isCurrentWeek ? ' <span style="color:var(--lime-dark);font-size:11px;font-weight:700;margin-left:6px">CURRENT</span>' : ''}${wkNum === 1 ? ' <span style="color:#FC4C02;font-size:10px;font-weight:800;margin-left:6px;letter-spacing:.04em">HAL HIGDON STARTS</span>' : ''}</div>
           <div class="plan-week-meta">${fmtShortDate(firstDate)} – ${fmtShortDate(lastDate)}</div>
         </div>
         <div class="plan-week-right">
@@ -2765,7 +2873,11 @@ function mRenderToday() {
       <div class="countdown-meta">
         <div class="countdown-meta-item">
           <span class="countdown-meta-val" id="m-week-num">—</span>
-          <span class="countdown-meta-key">of 21 Weeks</span>
+          <span class="countdown-meta-key" id="m-week-total">of 21 Weeks</span>
+        </div>
+        <div class="countdown-meta-item">
+          <span class="countdown-meta-val" id="m-hal-val">—</span>
+          <span class="countdown-meta-key" id="m-hal-key">to Hal Higdon</span>
         </div>
       </div>
       <div style="font-size:11px;color:rgba(255,255,255,0.4);font-family:'JetBrains Mono',monospace">${dateStr}</div>

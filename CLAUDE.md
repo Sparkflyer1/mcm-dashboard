@@ -33,8 +33,20 @@ There are NO rows in `auth.users`. So:
 - Every table needs explicit **anon** RLS policies (SELECT + INSERT/UPDATE). RLS is ON for all tables;
   a table with RLS on and no anon policy silently rejects all writes from the Worker (anon key).
 
+## PIN gate (frontend)
+A simple client-side PIN lock (`#pin-lock`) sits at the very top of `<body>` in `frontend/index.html`
+with its own inline `<style>` + `<script>`. It is a privacy curtain, NOT real security (data is behind
+the public Supabase anon key). PIN is obfuscated as base64 in `EXPECTED` (currently btoa of the 4-digit
+code). A successful unlock writes `mcm_pin_until` (now + 30 days) to localStorage and hides the overlay;
+on load, a still-valid timestamp skips the gate. To change the PIN, replace `EXPECTED` with the new
+`btoa('XXXX')` value. To reset the lock on a device, clear localStorage key `mcm_pin_until`.
+
 ## Key tables
 - `training_plan` (148 rows) — the plan. Date column is **`workout_date`** (not `date`).
+  Raw `week_number` runs -2,-1,0 (3 base-building weeks: Jun 1-21) then 1..18 (Hal Higdon 18-week
+  plan, starts **Jun 22 2026**). The UI renumbers for display (offset = 1 - minWeek, so today = Week 1)
+  and computes the "of N Weeks" total from the data so the last week always lands on race day
+  (Oct 26 2026). A "Hal Higdon starts" tag/countdown shows in the banner + Plan tab. See dSyncCountdown().
 - `workout_log`, `plan_completions` — workout logging. `plan_completions` is unique on (user_id, plan_id).
   NOTE: `plan_completions` has no `status` column, so a "skip" looks the same as "done" after refresh.
 - `strava_activities` — synced from Strava, PK `strava_id`, upsert merges on it.
