@@ -1310,6 +1310,13 @@ h1, h2, h3, h4 {
 // ── Constants ────────────────────────────────────────────────────
 const API = 'https://mcm-strava-worker.tyleresterly.workers.dev';
 window.API = API;
+// Supabase direct REST (public anon key — same one the Worker uses; RLS still governs access).
+// Lets the Plan tab read/write completions without a Worker redeploy.
+const SB_URL = 'https://pcbcuawqfdhtzzlqvatb.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjYmN1YXdxZmRodHp6bHF2YXRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTY2MDksImV4cCI6MjA5NDYzMjYwOX0.DhhVDWEhzLDk-FFwoYkW7chciRtR3lu7tIFrj-zt48g';
+const SB_UID = '00000000-0000-0000-0000-000000000001';
+const sbHeaders = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' };
+window.SB_URL = SB_URL;
 
 const RACE_DATE = new Date('2026-10-26T07:00:00-04:00');
 window.RACE_DATE = RACE_DATE;
@@ -1639,7 +1646,7 @@ function getPlanStatus(planEntry, completions) {
     c.training_plan?.workout_date === workoutDate || c.workout_date === workoutDate
   );
   if (!completion) return workoutDate === today ? 'today' : 'missed';
-  return completion.status === 'done' ? 'done' : 'skipped';
+  return 'done'; // any completion row = done (plan_completions has no status column)
 }
 window.getPlanStatus = getPlanStatus;
 
@@ -1850,6 +1857,51 @@ async function loadFullPlan() {
 }
 window.loadFullPlan = loadFullPlan;
 
+async function loadAllCompletions() {
+  // Read straight from Supabase REST (public anon key); embeds each plan day's date.
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/plan_completions?user_id=eq.${SB_UID}&select=*,training_plan(workout_date)`,
+      { headers: sbHeaders }
+    );
+    if (res.ok) state.allCompletions = await res.json();
+  } catch(e) {}
+}
+window.loadAllCompletions = loadAllCompletions;
+
+// Mark or un-mark ANY plan day complete (Plan tab catch-up) — direct to Supabase, no Worker needed.
+async function togglePlanDayComplete(planId, type, miles, date, isDone) {
+  try {
+    if (isDone) {
+      // Undo: remove the completion (and any workout_log) for this plan day.
+      const d1 = await fetch(`${SB_URL}/rest/v1/plan_completions?user_id=eq.${SB_UID}&plan_id=eq.${planId}`,
+        { method: 'DELETE', headers: sbHeaders });
+      if (!d1.ok) throw new Error('undo failed');
+      fetch(`${SB_URL}/rest/v1/workout_log?user_id=eq.${SB_UID}&plan_id=eq.${planId}`,
+        { method: 'DELETE', headers: sbHeaders }).catch(()=>{});
+      toast('Marked not done', 'ok');
+    } else {
+      // Upsert the completion on (user_id, plan_id).
+      const res = await fetch(`${SB_URL}/rest/v1/plan_completions?on_conflict=user_id,plan_id`, {
+        method: 'POST',
+        headers: { ...sbHeaders, 'Prefer': 'resolution=merge-duplicates,return=representation' },
+        body: JSON.stringify({ user_id: SB_UID, plan_id: planId }),
+      });
+      if (!res.ok) throw new Error('save failed');
+      fireConfetti({ workout_type: type });
+      toast('✓ Marked complete!', 'ok');
+    }
+    await loadAllCompletions();
+    await loadTodayWorkout();
+    renderToday(); mRenderToday();
+    if (window.renderPlan) renderPlan();
+    if (window.mRenderPlan) mRenderPlan();
+  } catch (e) {
+    toast('Could not update — try again', 'error');
+  }
+}
+window.togglePlanDayComplete = togglePlanDayComplete;
+
 async function logWorkout(status) {
   const prev = state.todayCompletion;
   state.todayCompletion = { status };
@@ -1877,6 +1929,7 @@ async function logWorkout(status) {
     } else {
       toast('Skipped — rest up.', 'ok');
     }
+    loadAllCompletions();
   } catch (e) {
     // Revert optimistic state so the UI reflects reality
     state.todayCompletion = prev || null;
@@ -2445,6 +2498,11 @@ function renderPlanInto(container, isMobile) {
             ${guidance.warmup ? `<div class="plan-detail-pace-item"><span class="plan-detail-pace-label">Warmup:</span><span class="plan-detail-pace-val" style="font-family:inherit;font-size:12px;color:var(--charcoal)">${guidance.warmup}</span></div>` : ''}
             ${guidance.rpe ? `<div class="plan-detail-pace-item"><span class="plan-detail-pace-label">Effort Level:</span><span class="plan-detail-pace-val">${guidance.rpe}/10</span></div>` : ''}
           </div>
+          ${type !== 'rest' ? `<div style="margin-top:10px">
+            <button class="btn btn-complete ${status === 'done' ? 'active' : ''}" style="font-size:12px;padding:7px 12px" onclick="event.stopPropagation(); togglePlanDayComplete(${p.id}, '${type}', ${p.distance_miles ? Number(p.distance_miles) : 'null'}, '${p.workout_date}', ${status === 'done'})">
+              ${status === 'done' ? '✓ Completed — tap to undo' : '✅ Mark complete'}
+            </button>
+          </div>` : ''}
         </div>
       `;
     });
@@ -3055,6 +3113,7 @@ async function init() {
   const [, ] = await Promise.all([
     checkStravaStatus(),
     loadTodayWorkout(),
+    loadAllCompletions(),
   ]);
 
   if (state.stravaConnected) {

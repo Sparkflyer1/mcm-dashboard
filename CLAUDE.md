@@ -47,6 +47,14 @@ on load, a still-valid timestamp skips the gate. To change the PIN, replace `EXP
   plan, starts **Jun 22 2026**). The UI renumbers for display (offset = 1 - minWeek, so today = Week 1)
   and computes the "of N Weeks" total from the data so the last week always lands on race day
   (Oct 26 2026). A "Hal Higdon starts" tag/countdown shows in the banner + Plan tab. See dSyncCountdown().
+- Catch-up / late workouts: the Plan tab lets you tap ANY day to mark complete or undo
+  (`togglePlanDayComplete()`). This talks to **Supabase REST directly** (public anon key `SB_KEY`,
+  `SB_URL`, `SB_UID` in the frontend) — upsert into `plan_completions` to mark, DELETE to undo —
+  so it needs NO Worker redeploy. `state.allCompletions` is loaded the same way
+  (`plan_completions?select=*,training_plan(workout_date)`). `getPlanStatus()` treats any completion
+  row as ✅ done. Today's card + Strava auto-complete are today-only and still go through the Worker.
+  (The Worker also has matching `/plan/completions` + `/plan/uncomplete` routes in source, but they are
+  NOT deployed — wrangler login was expired; the frontend doesn't depend on them.)
 - `workout_log`, `plan_completions` — workout logging. `plan_completions` is unique on (user_id, plan_id).
   NOTE: `plan_completions` has no `status` column, so a "skip" looks the same as "done" after refresh.
 - `strava_activities` — synced from Strava, PK `strava_id`, upsert merges on it.
