@@ -297,6 +297,7 @@ async function handlePlanLog(request: Request, env: Env): Promise<Response> {
   } = body;
 
   const today = toLocalDateStr(new Date());
+  const workoutDate = (body.workout_date as string) || today;
   // ANON_USER_ID is defined at module scope
 
   // Only write a real log entry for "done"
@@ -305,7 +306,7 @@ async function handlePlanLog(request: Request, env: Env): Promise<Response> {
     const logResp = await supabase(env, "workout_log", "POST", {
       user_id:          ANON_USER_ID,
       plan_id:          plan_id ?? null,
-      workout_date:     today,
+      workout_date:     workoutDate,
       workout_type:     workout_type ?? "easy_run",
       distance_miles:   distance_miles ?? null,
       duration_minutes: duration_minutes ?? null,
@@ -552,6 +553,33 @@ async function handlePlanAll(request: Request, env: Env): Promise<Response> {
   return jsonResponse(rows, 200, cors);
 }
 
+/** GET /plan/completions — all completions for the user, with each plan day's date */
+async function handlePlanCompletions(request: Request, env: Env): Promise<Response> {
+  const cors = corsHeaders(env, request.headers.get("Origin"));
+  const resp = await supabase(
+    env,
+    `plan_completions?user_id=eq.${ANON_USER_ID}&select=*,training_plan(workout_date)`
+  );
+  if (!resp.ok) return jsonResponse({ error: "Supabase error" }, 502, cors);
+  return jsonResponse(await resp.json(), 200, cors);
+}
+
+/** POST /plan/uncomplete — remove a completion (and its workout_log) for a plan day */
+async function handlePlanUncomplete(request: Request, env: Env): Promise<Response> {
+  const cors = corsHeaders(env, request.headers.get("Origin"));
+  let body: Record<string, unknown>;
+  try { body = await request.json() as Record<string, unknown>; }
+  catch { return jsonResponse({ error: "Invalid JSON body" }, 400, cors); }
+  const plan_id = body.plan_id;
+  if (plan_id == null) return jsonResponse({ error: "plan_id required" }, 400, cors);
+
+  // Delete the completion row, then any workout_log rows for that plan day.
+  const delComp = await supabase(env, `plan_completions?user_id=eq.${ANON_USER_ID}&plan_id=eq.${plan_id}`, "DELETE");
+  await supabase(env, `workout_log?user_id=eq.${ANON_USER_ID}&plan_id=eq.${plan_id}`, "DELETE");
+  if (!delComp.ok) return jsonResponse({ error: "Supabase delete failed", detail: await delComp.text() }, 502, cors);
+  return jsonResponse({ success: true, plan_id }, 200, cors);
+}
+
 // ─── Main fetch handler ───────────────────────────────────────────────────────
 export default {
   async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
@@ -587,6 +615,8 @@ export default {
       if (pathname === "/plan/completion" && request.method === "GET")  return handlePlanCompletion(request, env);
       if (pathname === "/plan/log"        && request.method === "POST") return handlePlanLog(request, env);
       if (pathname === "/plan/all"        && request.method === "GET")  return handlePlanAll(request, env);
+      if (pathname === "/plan/completions" && request.method === "GET")  return handlePlanCompletions(request, env);
+      if (pathname === "/plan/uncomplete"  && request.method === "POST") return handlePlanUncomplete(request, env);
 
       // Activities
       if (pathname === "/activities/list"    && request.method === "GET") return handleActivitiesList(request, env);
